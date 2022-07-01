@@ -4,6 +4,7 @@
 #include "framework.h"
 #include "Defence.h"
 #include "Object.h"
+#include <math.h>
 #define MAX_LOADSTRING 100
 
 // 전역 변수:
@@ -148,7 +149,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     RECT Win_rect;
     Gun_Barrel barrel;
     Bullets bullets;
-    bool space = TRUE;
+    static bool space = FALSE;
     //Defence_Wall wall;
     //HDC hdc;
     static float x, y;
@@ -162,8 +163,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         DialogBox(hInst, MAKEINTRESOURCE(IDD_DIALOG1), hWnd, Dlg_Proc);
 
         break;
-    case VK_SPACE:
-        space = TRUE;
+    case WM_KEYDOWN:
+        switch (wParam)
+        {
+        case VK_SPACE:
+            space = TRUE;
+            InvalidateRect(hWnd, NULL, TRUE);
+            break;
+        case VK_LEFT:
+            
+            break;
+        case VK_RIGHT:
+            break;
+        }
+        
         break;
     case WM_COMMAND:
         {

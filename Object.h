@@ -51,6 +51,7 @@ public:
 class Enemy
 {
 private:
+
 public:
 };
 
@@ -64,8 +65,8 @@ private:
 public:
 	Bullets()
 	{
-		this->x = b_x + b_r + r;
-		this->y = b_y + b_r + r;
+		this->x = b_x ;
+		this->y = b_y - (b_r + r);
 	}
 	void draw(HDC hdc)
 	{
