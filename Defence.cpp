@@ -10,12 +10,13 @@
 HINSTANCE hInst;                                // 현재 인스턴스입니다.
 WCHAR szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입니다.
 WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
-
+TCHAR ID[100];
 // 이 코드 모듈에 포함된 함수의 선언을 전달합니다:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
+BOOL CALLBACK Dlg_Proc(HWND hWnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -121,13 +122,35 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //  WM_DESTROY  - 종료 메시지를 게시하고 반환합니다.
 //
 //
+BOOL CALLBACK Dlg_Proc(HWND hWnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
+{
+    switch (iMsg)
+    {
+    case WM_INITDIALOG:
+        return 1;
+    case WM_COMMAND:
+        switch (LOWORD(wParam))
+        {
+        case IDOK:
+            GetDlgItemText(hWnd, IDC_IDBOX, ID, 100);
+            EndDialog(hWnd, 0);
+            break;
+        }
+        break;
+    }
+    return 0;
+}
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+    HDC hdc;
     Player player;
     RECT Win_rect;
     Gun_Barrel barrel;
+    Bullets bullets;
+    bool space = TRUE;
     //Defence_Wall wall;
-
+    //HDC hdc;
     static float x, y;
 
     switch (message)
@@ -136,7 +159,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         GetClientRect(hWnd, &Win_rect);
         x = Win_rect.right = 1280 ;
         y = Win_rect.bottom = 1424;
-        
+        DialogBox(hInst, MAKEINTRESOURCE(IDD_DIALOG1), hWnd, Dlg_Proc);
+
+        break;
+    case VK_SPACE:
+        space = TRUE;
         break;
     case WM_COMMAND:
         {
@@ -160,9 +187,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
             // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다...
+            TextOut(hdc, 50, 10, ID, _tcslen(ID));
             barrel.Draw(hdc);
             player.SetPlayer(x*0.5f, y*0.5f);
             player.DrawPlayer(hdc);
+            if (space)
+            {
+                bullets.draw(hdc);
+            }
             //wall.Set_Wall(x*0.1, y - (y * 0.1f),x,y );
             //wall.Draw(hdc);
             EndPaint(hWnd, &ps);
@@ -196,3 +228,4 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
     }
     return (INT_PTR)FALSE;
 }
+

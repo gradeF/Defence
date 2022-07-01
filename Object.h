@@ -57,9 +57,20 @@ public:
 class Bullets
 {
 private:
-	float x, y;//barrel의 끝이 기준점
-
+	float x, y, r=50;//bullets의 좌표와 반지름
+	float b_x = 640;
+	float b_y = 712;
+	float b_r = 200;
 public:
+	Bullets()
+	{
+		this->x = b_x + b_r + r;
+		this->y = b_y + b_r + r;
+	}
+	void draw(HDC hdc)
+	{
+		Ellipse(hdc, x-50, y-50,x+50, y+50 );
+	}
 };
 class Defence_Wall
 {

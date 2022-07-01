@@ -16,6 +16,7 @@
 #define IDD_DIALOG2                     130
 #define IDC_IDTEXT                      1000
 #define IDC_EDIT1                       1001
+#define IDC_IDBOX                       1001
 #define IDC_RESULT                      1002
 #define IDC_RANKING                     1003
 #define IDC_STATIC                      -1
