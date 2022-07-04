@@ -7,13 +7,21 @@ class Player {
 private:
 	float x;
 	float y;
-	float r = 100;
+	float r; //50
 	RECT rect;
 public:
-	Player() {
-		x = 0.0f;
-		y = 0.0f;
+	Player()
+	{
+		x = 640;
+		y = 712;
+		r = 50.0f;
 	}
+	Player(float x, float y, float r)
+		:
+		x(x),
+		y(y),
+		r(r)
+	{}
 	~Player() {}
 	void SetPlayer(float x, float y)
 	{
@@ -29,7 +37,7 @@ class Gun_Barrel
 {
 private:
 	float x, y; //원의 중심
-	float r = 200; //원의 중심에서의 거리
+	float r = 100; //원의 중심에서의 거리
 public:
 	Gun_Barrel()
 	{
@@ -42,6 +50,18 @@ public:
 		this->x = x;
 		this->y = y;
 	}*/
+	float GetBarrleX() const
+	{
+		return x;
+	}
+	float GetBarrleY() const
+	{
+		return y;
+	}
+	float GetBarrleR() const
+	{
+		return r;
+	}
 	void Draw(HDC hdc)
 	{
 		MoveToEx(hdc, x, y, NULL);
@@ -51,7 +71,13 @@ public:
 class Enemy
 {
 private:
-
+	float width;
+	float height;
+	float x, y;
+	float left;
+	float right;
+	float top;
+	float bottom;
 public:
 };
 
@@ -75,48 +101,53 @@ public:
 };
 class Defence_Wall
 {
-private:
-	int number=8;
-	float x, y; //center
-	float left;
-	float right;
-	float top;
-	float bottom;
-	float width;
-	float height;
-	float halfwidth;
-	float halfheight;
 public:
 	Defence_Wall()
-	{	
-		x = 0;
-		y = height - (height * 0.1f);
-		width = right - left;
-		height = bottom - top;
-		halfwidth = width * 0.5f;
-		halfheight = height * 0.5f;
-	}
-	void Draw(HDC hdc) 
 	{
-		
-			Rectangle(hdc, left, top, right, bottom);
-		
+		x = 640;
+		y = 712;
+		rectwidth = 640;
+		rectheight = 712;
+		halfwidth = rectwidth * 0.5f;
+		halfheight = rectheight * 0.1f;
+		width = halfwidth * 0.25f;
+		height = halfheight;
 	}
-	void Set_Wall(float x, float y,float width, float height) 
+	Defence_Wall( float x, float y, float rectwidth, float rectheight )
+		:
+		x( x ),
+		y( y ),
+		rectwidth( rectwidth ),
+		rectheight( rectheight ),
+		halfwidth(rectwidth * 0.5f),
+		halfheight(rectheight * 0.1f),
+		width(halfwidth*0.25f),
+		height(halfheight)
 	{
-		this->width = width;
-		this->height = height;
-		this->x = x;
-		this->y = y;
-		halfwidth = width * 0.5f;
-		halfheight = height * 0.5f;
-
-		left = x - halfwidth;
-		right = x + halfwidth;
-		top = y - halfheight;
-		bottom = y + halfheight;
-
-
 	}
-
+	void Draw( HDC hdc ) const
+	{
+		int x_in = x;
+		for (int i = 0; i < 4; i++)
+		{
+			Rectangle( hdc, x_in, y, x_in + width, y + height );
+			x_in += width;
+		}
+		x_in = x;
+		for (int i = 0; i < 5; i++)
+		{
+			Rectangle( hdc, x_in - width, y, x_in + width, y + height );
+			x_in -= width;
+		}
+		
+	}
+private:
+	int number=8;
+	float x, y; //player center
+	float rectwidth;
+	float rectheight;
+	float halfwidth; //rect halfwidth
+	float halfheight; //not half, is divided 10.
+	float width;
+	float height;
 };
