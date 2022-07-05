@@ -150,14 +150,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     RECT Win_rect;
     Gun_Barrel barrel;
     Bullets bullets;
-    Enemy en(120,120);
-    EnemyMove enmove;
+    static Enemy en(120,120);
     static bool space = FALSE;
     static bool right = FALSE;
     static bool left = FALSE;
     static float en_d_y;
     Defence_Wall wall;
-    //HDC hdc;
     static float x, y;
 
     switch (message)
@@ -188,8 +186,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
         break;
     case WM_TIMER:
-        en_d_y += enmove.DownValue();
-        en.SetY(en_d_y);
+        en.Move();
         InvalidateRect(hWnd, NULL, TRUE);
         //en.SetY(en_d_y);
         break;
@@ -202,11 +199,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             TextOut( hdc, 150, 10, _T( "score : " ), 8 );
             barrel.Draw(hdc);
             en.Draw(hdc);
-            en.Draw(hdc, en_d_y);
             player.DrawPlayer(hdc);
             wall.Draw( hdc );
-           
-            
             EndPaint(hWnd, &ps);
         }
         break;

@@ -81,10 +81,11 @@ public:
 	{
 		width = 120.0f;
 		height = 120.0f;
-		/*std::random_device rd;
+		std::random_device rd;
 		std::mt19937 rng(rd());
-		std::uniform_real_distribution<float> RotateGen(RotateMin, RotateMax);*/
-		x = 100.0f;
+		std::uniform_real_distribution<float> RotateGen(RotateMin, RotateMax);
+		x = RotateGen(rng);
+		//x = 100.0f;
 		y = 100.0f;
 	}
 	Enemy(float width, float height)
@@ -92,10 +93,11 @@ public:
 		width(width),
 		height(height)
 	{
-		/*std::random_device rd;
+		std::random_device rd;
 		std::mt19937 rng(rd());
-		std::uniform_real_distribution<float> RotateGen(RotateMin, RotateMax);*/
-		x = 100.0f;
+		std::uniform_real_distribution<float> RotateGen(RotateMin, RotateMax);
+		x = RotateGen(rng);
+		//x = 100.0f;
 		y = 100.0f;
 
 	}
@@ -119,9 +121,10 @@ public:
 	{
 		Rectangle(hdc, x - (width * 0.5f), y - (height * 0.5f), x + (width * 0.5f), y + (height * 0.5f));
 	}
-	void Draw(HDC hdc, float y)
+	void Move()
 	{
-		Rectangle(hdc, x - (width * 0.5f), y - (height * 0.5f), x + (width * 0.5f), y + (height * 0.5f));
+		/*y += y * 9.8f;*/
+		y += 3.0f;
 	}
 private:
 	float width;
