@@ -1,7 +1,9 @@
 #pragma once
+#define _USE_MATH_DEFINES
 #include <vector>
 #include "framework.h"
 #include <random>
+#include <math.h>
 
 class Player {
 private:
@@ -33,26 +35,27 @@ public:
 	}
 
 };
-class Gun_Barrel 
+class Gun_Barrel
 {
 private:
 	float x, y; //원의 중심
 	float x1, y1;
-	float r = 100; //원의 중심에서의 거리
+	float r = 100;
+	float angle = M_PI * 0.12f;//원의 중심에서의 거리
 public:
 	Gun_Barrel()
 	{
 		x = 640; //원에서 받아오게 만들기
 		y = 712;
-		x1 = x + r;
-		y1 = y - r;
+		x1 = x+r;
+		y1 = y-r;
 
 	}
-	void SetbarrelX(float x)
+	void SetbarrelX( float x )
 	{
 		x1 = x;
 	}
-	void SetBarrleY(float y)
+	void SetBarrleY( float y )
 	{
 		y1 = y;
 	}
@@ -68,11 +71,21 @@ public:
 	{
 		return r;
 	}
-	void Draw(HDC hdc)
+	void Draw( HDC hdc )
 	{
-		MoveToEx(hdc, x, y, NULL);
-		LineTo(hdc, x1, y1);
-	};
+		MoveToEx( hdc, x, y, NULL );
+		LineTo( hdc, x1, y1 );
+	}
+	void RightMove()
+	{
+		x1 += r * cos( angle );
+		y1 += r * sin( angle );
+	}
+	void LeftMove()
+	{
+		x1 += r * -cos( angle );
+		y1 += r * -sin( angle );
+	}
 };
 class Enemy
 {

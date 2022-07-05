@@ -148,7 +148,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     HDC hdc;
     Player player;
     RECT Win_rect;
-    Gun_Barrel barrel;
+    static Gun_Barrel barrel;
     Bullets bullets;
     static Enemy en(120,120);
     static bool space = FALSE;
@@ -168,6 +168,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         player.SetPlayer( x * 0.5f, y * 0.5f );
         DialogBox(hInst, MAKEINTRESOURCE(IDD_DIALOG1), hWnd, Dlg_Proc);
         break;
+    
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);
@@ -183,6 +184,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             default:
                 return DefWindowProc(hWnd, message, wParam, lParam);
             }
+        }
+        break;
+    case WM_KEYDOWN:
+        switch (wParam)
+        {
+        case VK_LEFT:
+            barrel.LeftMove();
+            InvalidateRect( hWnd, NULL, TRUE );
+            break;
+        case VK_RIGHT:
+            barrel.RightMove();
+            InvalidateRect( hWnd, NULL, TRUE );
+            break;
         }
         break;
     case WM_TIMER:
