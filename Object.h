@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include "framework.h"
-
+#include <random>
 
 class Player {
 private:
@@ -37,19 +37,25 @@ class Gun_Barrel
 {
 private:
 	float x, y; //원의 중심
+	float x1, y1;
 	float r = 100; //원의 중심에서의 거리
 public:
 	Gun_Barrel()
 	{
 		x = 640; //원에서 받아오게 만들기
 		y = 712;
+		x1 = x + r;
+		y1 = y - r;
 
 	}
-	/*void setBarrel(float x, float y)
+	void SetbarrelX(float x)
 	{
-		this->x = x;
-		this->y = y;
-	}*/
+		x1 = x;
+	}
+	void SetBarrleY(float y)
+	{
+		y1 = y;
+	}
 	float GetBarrleX() const
 	{
 		return x;
@@ -65,20 +71,65 @@ public:
 	void Draw(HDC hdc)
 	{
 		MoveToEx(hdc, x, y, NULL);
-		LineTo(hdc, x, y-r);
+		LineTo(hdc, x1, y1);
 	};
 };
 class Enemy
 {
+public:
+	Enemy()
+	{
+		width = 120.0f;
+		height = 120.0f;
+		/*std::random_device rd;
+		std::mt19937 rng(rd());
+		std::uniform_real_distribution<float> RotateGen(RotateMin, RotateMax);*/
+		x = 100.0f;
+		y = 100.0f;
+	}
+	Enemy(float width, float height)
+		:
+		width(width),
+		height(height)
+	{
+		/*std::random_device rd;
+		std::mt19937 rng(rd());
+		std::uniform_real_distribution<float> RotateGen(RotateMin, RotateMax);*/
+		x = 100.0f;
+		y = 100.0f;
+
+	}
+	float GetX() const
+	{
+		return x;
+	}
+	float GetY() const
+	{
+		return y;
+	}
+	void SetX(float x)
+	{
+		this->x = x;
+	}
+	void SetY(float y)
+	{
+		this->y = y;
+	}
+	void Draw(HDC hdc)
+	{
+		Rectangle(hdc, x - (width * 0.5f), y - (height * 0.5f), x + (width * 0.5f), y + (height * 0.5f));
+	}
+	void Draw(HDC hdc, float y)
+	{
+		Rectangle(hdc, x - (width * 0.5f), y - (height * 0.5f), x + (width * 0.5f), y + (height * 0.5f));
+	}
 private:
 	float width;
 	float height;
 	float x, y;
-	float left;
-	float right;
-	float top;
-	float bottom;
-public:
+
+	float RotateMin = 100.0f;
+	float RotateMax = 1300.0f;
 };
 
 class Bullets
@@ -106,7 +157,7 @@ public:
 	{
 		x = 640;
 		y = 712;
-		rectwidth = 640;
+		rectwidth = 1440;
 		rectheight = 712;
 		halfwidth = rectwidth * 0.5f;
 		halfheight = rectheight * 0.1f;
@@ -134,12 +185,11 @@ public:
 			x_in += width;
 		}
 		x_in = x;
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 4; i++)
 		{
 			Rectangle( hdc, x_in - width, y, x_in + width, y + height );
 			x_in -= width;
 		}
-		
 	}
 private:
 	int number=8;

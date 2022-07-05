@@ -1,29 +1,26 @@
 #pragma once
 #include "Object.h"
-#include <cmath>
-class PhysicsClass
+#define _USE_MATH_DEFINES
+#include <math.h>
+class EnemyMove
 {
 public:
-	PhysicsClass()
+	EnemyMove()
 	{
-		barrelX = barrel.GetBarrleX();
-		barrelY = barrel.GetBarrleY();
-		barrelR = barrel.GetBarrleR();
-		angle = 15;
+		en_X = enemy.GetX();
+		en_Y = enemy.GetY();
 	}
-	PhysicsClass( float barrelX, float BarrelY, float barrelR )
+	EnemyMove(float x, float y)
 		:
-		barrelX(barrel.GetBarrleX()),
-		barrelY(barrel.GetBarrleY()),
-		barrelR(barrel.GetBarrleR()),
-		angle(15)
+		en_X(x),
+		en_Y(y)
 	{}
-
+	float DownValue()
+	{
+		en_Y += en_Y * 9.8f;
+	}
 private:
-	Gun_Barrel barrel;
-	float barrelX;
-	float barrelY;
-	float barrelR;
-	float angle;
+	Enemy enemy;
+	float en_X;
+	float en_Y;
 };
-

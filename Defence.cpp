@@ -4,6 +4,7 @@
 #include "framework.h"
 #include "Defence.h"
 #include "Object.h"
+#include "PhysicsClass.h"
 #include <math.h>
 #define MAX_LOADSTRING 100
 
@@ -149,7 +150,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     RECT Win_rect;
     Gun_Barrel barrel;
     Bullets bullets;
+    Enemy en(120,120);
+    EnemyMove enmove;
     static bool space = FALSE;
+    static bool right = FALSE;
+    static bool left = FALSE;
+    static float en_d_y;
     Defence_Wall wall;
     //HDC hdc;
     static float x, y;
@@ -158,25 +164,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
     case WM_CREATE:
         GetClientRect(hWnd, &Win_rect);
+        SetTimer(hWnd, 1, 70, NULL);
         x = Win_rect.right = 1280 ;
         y = Win_rect.bottom = 1424;
         player.SetPlayer( x * 0.5f, y * 0.5f );
         DialogBox(hInst, MAKEINTRESOURCE(IDD_DIALOG1), hWnd, Dlg_Proc);
-        break;
-    case WM_KEYDOWN:
-        switch (wParam)
-        {
-        case VK_SPACE:
-            space = TRUE;
-            InvalidateRect(hWnd, NULL, TRUE);
-            break;
-        case VK_LEFT:
-            
-            break;
-        case VK_RIGHT:
-            break;
-        }
-        
         break;
     case WM_COMMAND:
         {
@@ -195,6 +187,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             }
         }
         break;
+    case WM_TIMER:
+        en_d_y += enmove.DownValue();
+        en.SetY(en_d_y);
+        InvalidateRect(hWnd, NULL, TRUE);
+        //en.SetY(en_d_y);
+        break;
     case WM_PAINT:
         {
             PAINTSTRUCT ps;
@@ -203,19 +201,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             TextOut(hdc, 50, 10, ID, _tcslen(ID));
             TextOut( hdc, 150, 10, _T( "score : " ), 8 );
             barrel.Draw(hdc);
+            en.Draw(hdc);
+            en.Draw(hdc, en_d_y);
             player.DrawPlayer(hdc);
             wall.Draw( hdc );
-            if (space)
-            {
-                bullets.draw(hdc);
-            }
-            //wall.Set_Wall(x*0.1, y - (y * 0.1f),x,y );
-            //wall.Draw(hdc);
+           
+            
             EndPaint(hWnd, &ps);
         }
         break;
     case WM_DESTROY:
         PostQuitMessage(0);
+        KillTimer(hWnd,1);
         break;
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
