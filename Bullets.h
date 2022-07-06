@@ -12,10 +12,10 @@ public:
 	~Bullets() {}
 	void draw(HDC hdc)
 	{
-		Ellipse(hdc, vec.GetX() - r, vec.GetY() - r, vec.GetX() + r, vec.GetY() + r);
+		Ellipse(hdc, vec.x - r, vec.y - r, vec.x + r, vec.y + r);
 	}
 private:
-	Vec2 vec;
+	Vec2<float> vec;
 	float r = 10;//bullets의 좌표와 반지름
 };
 

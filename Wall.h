@@ -6,7 +6,8 @@
 class Wall
 {
 public:
-	Wall(std::vector<Vec2>& center, float width, float height)
+
+	Wall(std::vector<Vec2<float>>& center, float width, float height)
 		:
 		center(center),
 		width(width),
@@ -20,11 +21,11 @@ public:
 	{
 		for (int i = 0; i < 8; i+=width)
 		{
-			Rectangle(hdc, center[i].GetX()-halfwidth,center[i].GetY()-halfheight, center[i].GetX() + halfwidth, center[i].GetY()+halfheight);
+			Rectangle(hdc, center[i].x-halfwidth,center[i].y-halfheight, center[i].x + halfwidth, center[i].y+halfheight);
 		}
 	}
 private:
-	std::vector<Vec2>& center;
+	std::vector<Vec2<float>>& center;
 	float width;
 	float height;
 	float halfwidth;

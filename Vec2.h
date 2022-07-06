@@ -1,70 +1,63 @@
 #pragma once
 #include <iostream>
 #include <cmath>
+
+template <typename T>
 class Vec2
 {
-private:
-	float x, y;
 public:
 	Vec2() { x = 0; y = 0; }
-
-	Vec2(Vec2& vec)
-	{
-		x = vec.x;
-		y = vec.y;
-	}
-	Vec2(float x, float y)
+	Vec2(T x, T y)
 		:
 		x(x), y(y)
 	{}
 	~Vec2() {};
-	const bool operator==(Vec2& vec)
+	Vec2& operator==(const Vec2& vec)
 	{
 		if (x == vec.x && y == vec.y)
 			return true;
 		else
 			return false;
 	}
-	const bool operator!=(Vec2& vec)
+	Vec2& operator!=(const Vec2& vec)
 	{
 		if (x != vec.x && y != vec.y)
 			return true;
 		else return false;
 	}
-	float operator+(Vec2& vec)
+	Vec2 operator+(Vec2& vec) const
 	{
 		return (x + vec.x, y + vec.y);
 	}
-	float operator-(Vec2& vec)
+	Vec2 operator-(Vec2& vec)
 	{
 		return (x - vec.x, y - vec.y);
 	}
-	float operator*(float d)
+	Vec2 operator*(T d) const
 	{
 		return (x * d, y * d);
 	}
-	float operator/(float d)
+	Vec2 operator/(T d) 
 	{
 		return (x / d, y / d);
 	}
-	static float Dot(Vec2& v1, Vec2& v2)
+	T Dot(const Vec2& v1)
 	{
-		return (v1.x * v2.x) + (v1.y * v2.y);
+		return (v1.x * x) + (v1.y * y);
 	}
-	static Vec2 Cross(Vec2& v1, Vec2& v2)
+	T Cross(Vec2& v1)
 	{
-		Vec2 temp;
-		return temp;
+		return (v1.x * y) - (v1.y * x);
 	}
-	float GetX() const
+	T GetX() const
 	{
 		return x;
 	}
-	float GetY() const
+	T GetY() const
 	{
 		return y;
 	}
-	float Length()
+	T GetLength() const
 	{
 		return sqrt(x * x + y * y);
 	}
@@ -75,11 +68,12 @@ public:
 		norm.y = y / sqrt(x * x + y * y);
 		return norm;
 	}
-	float angle(Vec2& v1, Vec2& v2)
+	float Rotate(float radian)
 	{
-		float angle;
-		angle = acos(Vec2::Dot(v1, v2) / (v1.Length() * v2.Length()));
-		angle = angle * 180 / 3.142592;
-		return angle;
+		x = x * cos( radian );
+		y = y * sin( radian );
+		return *this;
 	}
+public:
+	T x, y;
 };
