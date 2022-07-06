@@ -2,8 +2,8 @@
 //
 
 #include "framework.h"
-#include "Defence.h"
-#include "Object.h"
+#include "Main.h"
+#include "Player.h"
 #include "PhysicsClass.h"
 #include <math.h>
 #define MAX_LOADSTRING 100
@@ -146,27 +146,10 @@ INT_PTR CALLBACK Dlg_Proc(HWND hWnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     HDC hdc;
-    Player player;
-    RECT Win_rect;
-    static Gun_Barrel barrel;
-    Bullets bullets;
-    static Enemy en(120,120);
-    static bool space = FALSE;
-    static bool right = FALSE;
-    static bool left = FALSE;
-    static float en_d_y;
-    Defence_Wall wall;
-    static float x, y;
-
+    
     switch (message)
     {
     case WM_CREATE:
-        GetClientRect(hWnd, &Win_rect);
-        SetTimer(hWnd, 1, 70, NULL);
-        x = Win_rect.right = 1280 ;
-        y = Win_rect.bottom = 1424;
-        player.SetPlayer( x * 0.5f, y * 0.5f );
-        DialogBox(hInst, MAKEINTRESOURCE(IDD_DIALOG1), hWnd, Dlg_Proc);
         break;
     
     case WM_COMMAND:
@@ -187,34 +170,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
         break;
     case WM_KEYDOWN:
-        switch (wParam)
-        {
-        case VK_LEFT:
-            barrel.LeftMove();
-            InvalidateRect( hWnd, NULL, TRUE );
-            break;
-        case VK_RIGHT:
-            barrel.RightMove();
-            InvalidateRect( hWnd, NULL, TRUE );
-            break;
-        }
+
         break;
     case WM_TIMER:
-        en.Move();
-        InvalidateRect(hWnd, NULL, TRUE);
-        //en.SetY(en_d_y);
+     
         break;
     case WM_PAINT:
         {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
             // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다...
-            TextOut(hdc, 50, 10, ID, _tcslen(ID));
-            TextOut( hdc, 150, 10, _T( "score : " ), 8 );
-            barrel.Draw(hdc);
-            en.Draw(hdc);
-            player.DrawPlayer(hdc);
-            wall.Draw( hdc );
+
             EndPaint(hWnd, &ps);
         }
         break;

@@ -140,19 +140,31 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="bubble.h" />
+    <ClInclude Include="Bullets.h" />
     <ClInclude Include="DataHandler.h" />
-    <ClInclude Include="Defence.h" />
+    <ClInclude Include="Main.h" />
+    <ClInclude Include="DefenceWall.h" />
+    <ClInclude Include="Enemy.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="Gun_Barrel.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="PhysicsClass.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Vec2.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Bullets.cpp" />
     <ClCompile Include="DataHandler.cpp" />
-    <ClCompile Include="Defence.cpp" />
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="DefenceWall.cpp" />
+    <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="Gun_Barrel.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="PhysicsClass.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Vec2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Defence.rc" />
