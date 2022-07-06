@@ -5,20 +5,14 @@
 class Bullets
 {
 public:
-	Bullets(float x, float y, float r)
+	Bullets(float x, float y)
 		:
-		vec(x, y),
-		r(r)
+		vec(x, y)
 	{}
 	~Bullets() {}
 	void draw(HDC hdc)
 	{
 		Ellipse(hdc, vec.GetX() - r, vec.GetY() - r, vec.GetX() + r, vec.GetY() + r);
-	}
-	void Shoot(Vec2 vec1, Vec2 vec2)
-	{
-		//¥‹¿ß ∫§≈Õ
-		vec.angle(vec1, vec2);
 	}
 private:
 	Vec2 vec;

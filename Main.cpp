@@ -3,9 +3,7 @@
 
 #include "framework.h"
 #include "Main.h"
-#include "Player.h"
-#include "PhysicsClass.h"
-#include <math.h>
+
 #define MAX_LOADSTRING 100
 
 // 전역 변수:
@@ -19,6 +17,18 @@ BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK Dlg_Proc(HWND hWnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
+
+
+void Draw_circle(HDC hdc, POINT center, int radius)
+{
+    //원의 중심과 반지름을 인자로 받아 원을 그리는 함수를 구현
+    int x1 = center.x - radius;
+    int y1 = center.y - radius;
+    int x2 = center.x + radius;
+    int y2 = center.y + radius;
+    Ellipse(hdc, x1, y1, x2, y2);
+    
+}
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -126,6 +136,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 INT_PTR CALLBACK Dlg_Proc(HWND hWnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 {
+    
     switch (iMsg)
     {
     case WM_INITDIALOG:
@@ -146,10 +157,15 @@ INT_PTR CALLBACK Dlg_Proc(HWND hWnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     HDC hdc;
-    
+    static POINT player;
+
+    static RECT rectView;
     switch (message)
     {
     case WM_CREATE:
+        GetClientRect(hWnd, &rectView);
+        player.x = (rectView.right - rectView.left) * 0.5f;
+        player.y = (rectView.bottom - rectView.top) * 0.5f;
         break;
     
     case WM_COMMAND:
@@ -170,7 +186,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
         break;
     case WM_KEYDOWN:
-
+        switch (wParam) {
+        case VK_LEFT:
+            player.x -= 20.0f;
+            InvalidateRect(hWnd, NULL, TRUE);
+            break;
+        case VK_RIGHT:
+            player.x += 20.0f;
+            InvalidateRect(hWnd, NULL, TRUE);
+            break;
+        }
         break;
     case WM_TIMER:
      
@@ -180,7 +205,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
             // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다...
-
+            Draw_circle(hdc, player, 20);
             EndPaint(hWnd, &ps);
         }
         break;

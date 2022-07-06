@@ -51,10 +51,13 @@
     <ClInclude Include="Bullets.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="DefenceWall.h">
+    <ClInclude Include="Wall.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Vec2.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="MovePlayer.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -83,10 +86,13 @@
     <ClCompile Include="Bullets.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="DefenceWall.cpp">
+    <ClCompile Include="Wall.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Vec2.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="MovePlayer.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

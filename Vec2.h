@@ -75,7 +75,6 @@ public:
 		norm.y = y / sqrt(x * x + y * y);
 		return norm;
 	}
-	//단위벡터 만들기
 	float angle(Vec2& v1, Vec2& v2)
 	{
 		float angle;
