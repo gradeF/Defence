@@ -6,8 +6,8 @@ class Enemy
 public:
 	Enemy()
 	{
-		width = 120.0f;
-		height = 120.0f;
+		width = 40.0f;
+		height = 40.0f;
 		std::random_device rd;
 		std::mt19937 rng(rd());
 		std::uniform_real_distribution<float> RotateGen(RotateMin, RotateMax);
@@ -55,6 +55,6 @@ private:
 	float x, y;
 
 	float RotateMin = 100.0f;
-	float RotateMax = 1300.0f;
+	float RotateMax = 400.0f;
 };
 

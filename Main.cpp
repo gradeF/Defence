@@ -4,6 +4,7 @@
 #include "framework.h"
 #include "Object.h"
 #include "Main.h"
+#include "Enemy.h"
 
 
 #define MAX_LOADSTRING 100
@@ -149,13 +150,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     HDC hdc;
     player player(510, 410, 40);
-    barrel bar( 510, 410, 80 );
+    static barrel bar( 510, 410, 80 );
     //wall walls;
-    wall wall( 90, 480, 180,40 );
+    wall wall( 50, 480, 140,40 );
+    static Enemy enemy;
     switch (message)
     {
     case WM_CREATE:
-
+        SetTimer(hWnd, 1, 70, NULL);
         break;
     
     case WM_COMMAND:
@@ -178,8 +180,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_KEYDOWN:
         switch (wParam) {
         case VK_LEFT:
-           
-            InvalidateRect(hWnd, NULL, TRUE);
+            bar.RotateLeft();
+            //InvalidateRect(hWnd, NULL, TRUE);
             break;
         case VK_RIGHT:
 
@@ -188,7 +190,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
         break;
     case WM_TIMER:
-     
+        enemy.Move();
+        InvalidateRect(hWnd, NULL, TRUE);
         break;
     case WM_PAINT:
         {
@@ -198,6 +201,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             bar.Draw( hdc );
             player.Draw( hdc );
             wall.Draw( hdc );
+            enemy.Draw(hdc);
             EndPaint(hWnd, &ps);
         }
         break;

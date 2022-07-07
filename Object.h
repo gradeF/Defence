@@ -1,6 +1,8 @@
 #pragma once
+#define _USE_MATH_DEFINES
 #include "Vec2.h"
 #include "framework.h"
+#include <cmath>
 #include <vector>
 class Object 
 {
@@ -45,6 +47,7 @@ public:
 	{
 		Ellipse( hdc, (long)(center.x - r ), (long)(center.y - r), (long)(center.x + r), (long)(center.y + r));
 	}
+
 private:
 	float r;
 };
@@ -77,7 +80,11 @@ public:
 	{}
 	void Draw( HDC hdc ) const
 	{
-		Rectangle( hdc, left, top, right, bottom );
+		for(int i=0;i<8;i++)
+		{ 
+			Rectangle( hdc, left+(i*width), top, right + (i * width), bottom );
+		}
+		
 	}
 private:
 	float width;
@@ -97,27 +104,40 @@ public:
 	barrel()
 		:
 		Object(),
-		point( 0.0f, 0.0f ),
-		r( 1 )
+		point(0.0f, 0.0f),
+		temp(0.0f, 0.f),
+		angle(M_PI*15.0f/180.0f),
+		r(1)
 	{}
-	barrel( const Vec2<float>& center, Vec2<float> point, float r )
+	barrel(const Vec2<float>& center, Vec2<float> point, float r)
 		:
-		Object( center ),
-		point( point ),
-		r( r )
+		Object(center),
+		point(point),
+		temp(point),
+		angle(M_PI * 15.0f / 180.0f),
+		r(r)
 	{}
-	barrel( float x, float y, float r )
+	barrel(float x, float y, float r)
 		:
-		Object( x, y ),
-		point( x+r, y-r ),
-		r( r )
+		Object(x, y),
+		point(x + r, y - r),
+		temp(x+r, y-r),
+		angle(M_PI * 15.0f / 180.0f),
+		r(r)
 	{}
-	void Draw( HDC hdc ) const
+	void Draw(HDC hdc) const
 	{
-		MoveToEx( hdc, center.x, center.y, NULL );
-		LineTo( hdc, point.x, point.y );
+		MoveToEx(hdc, center.x, center.y, NULL);
+		LineTo(hdc, point.x, point.y);
+	}
+	void RotateLeft()
+	{
+		point.x = (r * cos(angle));// - (point.y * sin(angle));
+		point.y = (r * sin(angle)); //+ (point.y * sin(angle));
 	}
 private:
 	Vec2<float> point;
+	float angle;
 	float r;
+	Vec2<float> temp;
 };
