@@ -78,13 +78,16 @@ public:
 		halfwidth(width * 0.5f),
 		halfheight(height * 0.5f)
 	{}
+	RECT GetRect() const
+	{
+		return { (long)left, (long)top, (long)right, (long)bottom };
+	}
 	void Draw( HDC hdc ) const
 	{
 		for(int i=0;i<8;i++)
 		{ 
 			Rectangle( hdc, left+(i*width), top, right + (i * width), bottom );
 		}
-		
 	}
 private:
 	float width;
@@ -105,7 +108,7 @@ public:
 		:
 		Object(),
 		point(0.0f, 0.0f),
-		temp(0.0f, 0.f),
+		//temp(0.0f, 0.f),
 		angle(M_PI*15.0f/180.0f),
 		r(1)
 	{}
@@ -113,7 +116,7 @@ public:
 		:
 		Object(center),
 		point(point),
-		temp(point),
+		//temp(point),
 		angle(M_PI * 15.0f / 180.0f),
 		r(r)
 	{}
@@ -121,7 +124,7 @@ public:
 		:
 		Object(x, y),
 		point(x + r, y - r),
-		temp(x+r, y-r),
+		//temp(x+r, y-r),
 		angle(M_PI * 15.0f / 180.0f),
 		r(r)
 	{}
@@ -130,14 +133,15 @@ public:
 		MoveToEx(hdc, center.x, center.y, NULL);
 		LineTo(hdc, point.x, point.y);
 	}
-	void RotateLeft()
+	void Rotate()
 	{
-		point.x = (r * cos(angle));// - (point.y * sin(angle));
-		point.y = (r * sin(angle)); //+ (point.y * sin(angle));
+		Vec2<float> temp = point - center;
+		point.x = (temp.x * cos(angle)) - (temp.y * sin(angle)) + center.x;
+		point.y = (temp.x * sin(angle)) + (temp.y * cos(angle)) + center.y;
 	}
 private:
 	Vec2<float> point;
 	float angle;
 	float r;
-	Vec2<float> temp;
+	
 };

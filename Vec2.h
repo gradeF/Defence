@@ -27,11 +27,11 @@ public:
 	}
 	Vec2 operator+(Vec2& vec) const
 	{
-		return (x + vec.x, y + vec.y);
+		return Vec2(x + vec.x, y + vec.y);
 	}
-	Vec2 operator-(Vec2& vec)
+	Vec2 operator-(const Vec2& vec) const
 	{
-		return (x - vec.x, y - vec.y);
+		return { x - vec.x, y - vec.y };
 	}
 	Vec2 operator*(T d) const
 	{

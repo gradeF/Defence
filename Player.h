@@ -13,16 +13,16 @@ public:
 		:
 		center(0.0f, 0.0f),
 		r(10),
-		barrel(0.0f, 0.0f, r * 2.0f),
-		bullets(0.0f, 0.0f)
+		barrel(0.0f, 0.0f, r * 2.0f)
+		//bullets(0.0f, 0.0f)
 	{}
 
 	Player(float x, float y, float r)
 		:
 		center(x, y),
 		r(r),
-		barrel(x, y,r),
-		bullets(x, y)
+		barrel(x, y,r)
+		//bullets(x, y)
 	{}
 	~Player() {}
 	void Draw(HDC hdc) 
@@ -40,6 +40,6 @@ private:
 	float r; //50
 	RECT rect;
 	Gun_Barrel barrel;
-	Bullets bullets;
+	//Bullets bullets;
 };
 

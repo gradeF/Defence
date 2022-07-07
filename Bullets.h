@@ -1,10 +1,14 @@
 #pragma once
 #include "framework.h"
-#include "Player.h"
+
 #include "Vec2.h"
 class Bullets
 {
 public:
+	Bullets()
+		:
+		vec(0.0f, 0.0f)
+	{}
 	Bullets(float x, float y)
 		:
 		vec(x, y)
@@ -17,5 +21,7 @@ public:
 private:
 	Vec2<float> vec;
 	float r = 10;//bullets의 좌표와 반지름
+	float vel;
+
 };
 

@@ -41,6 +41,10 @@ public:
 	{
 		this->y = y;
 	}
+	RECT GetRect() const
+	{
+		return { (long)(x - (width * 0.5f)), (long)(y - (height * 0.5f)), (long)(x + (width * 0.5f)), (long)(y + (height * 0.5f)) };
+	}
 	void Draw(HDC hdc)
 	{
 		Rectangle(hdc, x - (width * 0.5f), y - (height * 0.5f), x + (width * 0.5f), y + (height * 0.5f));
@@ -53,8 +57,9 @@ private:
 	float width;
 	float height;
 	float x, y;
-
 	float RotateMin = 100.0f;
 	float RotateMax = 400.0f;
+
+
 };
 
