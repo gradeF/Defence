@@ -51,55 +51,6 @@ public:
 private:
 	float r;
 };
-class wall : public Object
-{
-public:
-	wall()
-		:
-		Object(),
-		width(1),
-		height(1),
-		halfwidth(width * 0.5f),
-		halfheight(height * 0.5f)
-	{}
-	wall (const Vec2<float> center, float width, float height)
-		:
-		Object(center),
-		width(width),
-		height(height),
-		halfwidth(width * 0.5f),
-		halfheight(height * 0.5f)
-	{}
-	wall(float x, float y, float width, float height)
-		:
-		Object(x,y),
-		width(width),
-		height(height),
-		halfwidth(width * 0.5f),
-		halfheight(height * 0.5f)
-	{}
-	RECT GetRect() const
-	{
-		return { (long)left, (long)top, (long)right, (long)bottom };
-	}
-	void Draw( HDC hdc ) const
-	{
-		for(int i=0;i<8;i++)
-		{ 
-			Rectangle( hdc, left+(i*width), top, right + (i * width), bottom );
-		}
-	}
-private:
-	float width;
-	float height;
-	float halfwidth;
-	float halfheight;
-	float left = center.x - halfwidth;
-	float right = center.x + halfwidth;
-	float top = center.y - halfheight;
-	float bottom = center.y + halfheight;
-	
-};
 
 class barrel : public Object
 {
@@ -133,11 +84,29 @@ public:
 		MoveToEx(hdc, center.x, center.y, NULL);
 		LineTo(hdc, point.x, point.y);
 	}
-	void Rotate()
+	void RotateRight()
 	{
+		
 		Vec2<float> temp = point - center;
 		point.x = (temp.x * cos(angle)) - (temp.y * sin(angle)) + center.x;
 		point.y = (temp.x * sin(angle)) + (temp.y * cos(angle)) + center.y;
+		if (point.y > 410)
+		{
+			point.y = 410;
+			point.x = 621;
+		}
+	}
+	void RotateLeft()
+	{
+		
+		Vec2<float> temp = point - center;
+		point.x = (temp.x * cos( -angle )) - (temp.y * sin( -angle )) + center.x;
+		point.y = (temp.x * sin( -angle )) + (temp.y * cos( -angle )) + center.y;
+		if (point.y > 410)
+		{
+			point.y = 410;
+			point.x = 399;
+		}
 	}
 private:
 	Vec2<float> point;

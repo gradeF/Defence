@@ -6,7 +6,7 @@
 #include "Main.h"
 #include "Enemy.h"
 #include "Bullets.h"
-
+#include "Wall.h"
 
 #define MAX_LOADSTRING 100
 
@@ -155,13 +155,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     static Bullets bullet;
     static int space;
     //wall walls;
-    wall wall( 50, 480, 140,40 );
-    static Enemy enemy;
+    static std::vector<wall> walls;
+    //wall wall( 70, 480, 140,40 );
+    static std::vector<Enemy> enemy;
     switch (message)
     {
     case WM_CREATE:
         SetTimer(hWnd, 1, 70, NULL);
         space = 0;
+        enemy.resize( 256 );
+        walls.resize( 256 );
         break;
     
     case WM_COMMAND:
@@ -184,11 +187,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_KEYDOWN:
         switch (wParam) {
         case VK_LEFT:
-            bar.Rotate();
+            bar.RotateLeft();
             //InvalidateRect(hWnd, NULL, TRUE);
             break;
         case VK_RIGHT:
-            bar.Rotate();
+            bar.RotateRight();
             InvalidateRect(hWnd, NULL, TRUE);
             break;
         case VK_SPACE:
@@ -198,7 +201,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
         break;
     case WM_TIMER:
-        enemy.Move();
+        for(int i = 0; i<8;i++)
+            enemy[i].Move();
         InvalidateRect(hWnd, NULL, TRUE);
         break;
     case WM_PAINT:
@@ -208,8 +212,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다...
             bar.Draw( hdc );
             player.Draw( hdc );
-            wall.Draw( hdc );
-            enemy.Draw(hdc);
+            walls[0].Draw( hdc );
+            for(int i =0; i<8;i++)
+                enemy[i].Draw(hdc);
             if (space ==1)
             {
                 bullet.draw(hdc);

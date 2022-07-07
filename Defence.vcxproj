@@ -139,31 +139,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="bubble.h" />
     <ClInclude Include="Bullets.h" />
-    <ClInclude Include="DataHandler.h" />
     <ClInclude Include="Main.h" />
+    <ClInclude Include="Timer.h" />
     <ClInclude Include="Wall.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="Gun_Barrel.h" />
-    <ClInclude Include="MovePlayer.h" />
     <ClInclude Include="Object.h" />
-    <ClInclude Include="PhysicsClass.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Vec2.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Bullets.cpp" />
-    <ClCompile Include="DataHandler.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Wall.cpp" />
     <ClCompile Include="Enemy.cpp" />
-    <ClCompile Include="Gun_Barrel.cpp" />
-    <ClCompile Include="MovePlayer.cpp" />
     <ClCompile Include="Object.cpp" />
-    <ClCompile Include="PhysicsClass.cpp" />
     <ClCompile Include="Vec2.cpp" />
   </ItemGroup>
   <ItemGroup>
