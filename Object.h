@@ -47,7 +47,14 @@ public:
 	{
 		Ellipse( hdc, (long)(center.x - r ), (long)(center.y - r), (long)(center.x + r), (long)(center.y + r));
 	}
-
+	float Get_x() const
+	{
+		return center.x;
+	}
+	float Get_y() const
+	{
+		return center.y;
+	}
 private:
 	float r;
 };
@@ -95,6 +102,18 @@ public:
 			point.y = 410;
 			point.x = 621;
 		}
+	}
+	float Get_point_x() const
+	{
+		return point.x;
+	}
+	float Get_point_y() const
+	{
+		return point.y;
+	}
+	float GetR() const
+	{
+		return r;
 	}
 	void RotateLeft()
 	{

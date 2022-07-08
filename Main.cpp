@@ -152,19 +152,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     HDC hdc;
     player player(510, 410, 40);
     static barrel bar( 510, 410, 80 );
-    static Bullets bullet;
+    static Bullets bullet(510, 410);
     static int space;
     //wall walls;
     static std::vector<wall> walls;
     //wall wall( 70, 480, 140,40 );
-    static std::vector<Enemy> enemy;
+    static Enemy enemy;
     switch (message)
     {
     case WM_CREATE:
         SetTimer(hWnd, 1, 70, NULL);
         space = 0;
-        enemy.resize( 256 );
         walls.resize( 256 );
+        walls[0] = { 70,480,140,40 };
         break;
     
     case WM_COMMAND:
@@ -201,8 +201,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         }
         break;
     case WM_TIMER:
-        for(int i = 0; i<8;i++)
-            enemy[i].Move();
+        enemy.Move();
+        bullet.Move();
         InvalidateRect(hWnd, NULL, TRUE);
         break;
     case WM_PAINT:
@@ -210,15 +210,20 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
             // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다...
+            
             bar.Draw( hdc );
+            
             player.Draw( hdc );
-            walls[0].Draw( hdc );
-            for(int i =0; i<8;i++)
-                enemy[i].Draw(hdc);
             if (space ==1)
             {
                 bullet.draw(hdc);
-            }
+            } 
+            for (int i = 0; i < 8; i++)
+                walls[i].Draw( hdc,3 );
+
+   
+                enemy.Draw(hdc);
+            
             EndPaint(hWnd, &ps);
         }
         break;

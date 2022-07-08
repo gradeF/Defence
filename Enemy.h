@@ -59,7 +59,7 @@ private:
 	float x, y;
 	float RotateMin = 100.0f;
 	float RotateMax = 400.0f;
-
+	bool alive = true;
 
 };
 

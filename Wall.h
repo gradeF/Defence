@@ -43,9 +43,13 @@ public:
 	{
 		return { (long)left, (long)top, (long)right, (long)bottom };
 	}
-	void Draw( HDC hdc ) const
+	void DrawRect( HDC hdc) const
 	{
 		Rectangle( hdc, left , top, right , bottom );
+	}
+	void Draw(HDC hdc, const int health)
+	{
+		DrawColorRect(hdc, health);
 	}
 	void Setpoints()
 	{
@@ -60,6 +64,43 @@ public:
 		points[3] = (center - Vec2<float>{left, bottom}) + center;
 
 	}
+	void Demaged(const int demage)
+	{
+		health -= demage;
+		if (health == 0)
+		{
+			exist = false;
+		}
+	}
+	void DrawColorRect(HDC hdc, const int health)
+	{
+		HBRUSH hBrush, oldBrush;
+		switch (health)
+		{
+		case 0:
+			//destroyed wall when health is empty
+			break;
+		case 1:
+			//Set Color Red
+			hBrush = CreateSolidBrush(RGB(255, 0, 0));
+			oldBrush = (HBRUSH)SelectObject(hdc, hBrush);
+			DrawRect(hdc);
+			SelectObject(hdc, oldBrush);
+			DeleteObject(hBrush);
+			break;
+		case 2:
+			//Set Color Green
+			hBrush = CreateSolidBrush(RGB(0, 255, 0));
+			oldBrush = (HBRUSH)SelectObject(hdc, hBrush);
+			DrawRect(hdc);
+			SelectObject(hdc, oldBrush);
+			DeleteObject(hBrush);
+			break;
+		case 3:
+			DrawRect(hdc);
+			break;
+		}
+	}
 private:
 	Vec2<float> center;
 	std::vector<Vec2<float>> points;
@@ -70,7 +111,8 @@ private:
 	float left;
 	float right;
 	float top;
-	float bottom ;
-
+	float bottom;
+	int health = 3;
+	bool exist = true;
 };
 

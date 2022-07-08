@@ -35,7 +35,7 @@ public:
 	}
 	Vec2 operator*(T d) const
 	{
-		return (x * d, y * d);
+		return Vec2(x * d, y * d);
 	}
 	Vec2 operator/(T d) 
 	{
