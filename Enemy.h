@@ -11,7 +11,8 @@ public:
 		std::random_device rd;
 		std::mt19937 rng(rd());
 		std::uniform_real_distribution<float> RotateGen(RotateMin, RotateMax);
-		x = RotateGen(rng);
+		/*x = RotateGen(rng);*/
+		x = 100.0f;
 		y = 100.0f;
 	}
 	Enemy(float width, float height)
@@ -22,8 +23,13 @@ public:
 		std::random_device rd;
 		std::mt19937 rng(rd());
 		std::uniform_real_distribution<float> RotateGen(RotateMin, RotateMax);
-		x = RotateGen(rng);
+		//x = RotateGen(rng);
+		x = 100.0f;
 		y = 100.0f;
+	}
+	~Enemy()
+	{
+
 	}
 	float GetX() const
 	{
@@ -60,6 +66,5 @@ private:
 	float RotateMin = 100.0f;
 	float RotateMax = 400.0f;
 	bool alive = true;
-
 };
 

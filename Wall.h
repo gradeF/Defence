@@ -1,6 +1,7 @@
 #pragma once
 #include "framework.h"
 #include "Vec2.h"
+#include "Enemy.h"
 #include <vector>
 
 class wall
@@ -99,6 +100,17 @@ public:
 		case 3:
 			DrawRect(hdc);
 			break;
+		}
+	}
+	bool CheckEnemy(const Enemy& en, const wall& wa )
+	{
+		RECT enR = en.GetRect();
+		RECT waR = wa.GetRect();
+		if (enR.bottom >= waR.top)
+		{
+			Demaged(1);
+			
+			return TRUE;
 		}
 	}
 private:

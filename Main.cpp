@@ -154,17 +154,19 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     static barrel bar( 510, 410, 80 );
     static Bullets bullet(510, 410);
     static int space;
+    static int health = 3;
+    static bool check = false;
     //wall walls;
-    static std::vector<wall> walls;
-    //wall wall( 70, 480, 140,40 );
+    //static std::vector<wall> walls;
+    wall wall( 70, 480, 140,40 );
     static Enemy enemy;
     switch (message)
     {
     case WM_CREATE:
         SetTimer(hWnd, 1, 70, NULL);
         space = 0;
-        walls.resize( 256 );
-        walls[0] = { 70,480,140,40 };
+        //walls.resize( 256 );
+        //walls[0] = { 70,480,140,40 };
         break;
     
     case WM_COMMAND:
@@ -203,6 +205,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_TIMER:
         enemy.Move();
         bullet.Move();
+        check = wall.CheckEnemy(enemy, wall);
         InvalidateRect(hWnd, NULL, TRUE);
         break;
     case WM_PAINT:
@@ -218,11 +221,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             {
                 bullet.draw(hdc);
             } 
-            for (int i = 0; i < 8; i++)
-                walls[i].Draw( hdc,3 );
-
-   
-                enemy.Draw(hdc);
+            //for (int i = 0; i < 8; i++)
+                //walls[i].Draw( hdc,3 );
+            if (check == true)
+            {
+                health -= 1;
+            }
+            wall.Draw(hdc,health);
+            enemy.Draw(hdc);
             
             EndPaint(hWnd, &ps);
         }
