@@ -152,7 +152,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     HDC hdc;
     Player player(510, 410);
     static barrel bar( 510, 410, 80 );
-    //static Bullets bullet(510, 410);
     static std::vector<Bullets> bullets;
     static int space;
     static int health = 3;
@@ -208,8 +207,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             InvalidateRect(hWnd, NULL, TRUE);
             break;
         case VK_SPACE:
-            count++;
-            bullet[count] = { bar.Get_point_x(), bar.Get_point_y() };
+            /*bullet[count] = { bar.Get_point_x(), bar.Get_point_y() };*/
+            bullets.emplace_back( ); //??? 510은 x, 410은 y
             space = 1;
             //InvalidateRect(hWnd, NULL, TRUE);
             break;
@@ -217,15 +216,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     case WM_TIMER:
         enemy.Move();
-        bullet[count].Move();
-       /* for (int i = 0; i < 8; i++)
+        for (auto& e :bullets)
         {
-            check = walls[i].CheckEnemy( enemy, walls[i] );
-            if (check)
-            {
-                return who = i;
-            }
-        }*/
+            e.Move();
+        }
         InvalidateRect(hWnd, NULL, TRUE);
         break;
     case WM_PAINT:
@@ -237,10 +231,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             bar.Draw( hdc );
             
             player.Draw( hdc );
-            if (space ==1)
+
+            for ( const auto& e : bullets)
             {
-            bullet[count].draw(hdc);
-            } 
+                e.draw( hdc );
+            }
+            
             if (who != NULL )
             {
                 health -= 1;

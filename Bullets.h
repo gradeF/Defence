@@ -10,28 +10,30 @@ class Bullets
 public:
 	Bullets()
 		:
-		vec(p.Get_x() + bar.GetR(), p.Get_y() + bar.GetR())
+		vec(0.0f, 0.0f),
+		dir(bar.Get_x(), bar.Get_y())
 	{}
 	Bullets(float x, float y)
 		:
-		vec(x + bar.GetR(), y + bar.GetR())
-		
+		vec(x , y ),
+		dir( bar.Get_x(), bar.Get_y() )
 	{}
 	Bullets(const Vec2<float>& center)
 	{
-		float x = bar.Get_point_x() + p.Get_x();
-		float y = bar.Get_point_y() + p.Get_y(); 
+		vec.x = center.x;
+		vec.y = center.y;
+		dir.x = bar.Get_x();
+		dir.y = bar.Get_y();
 	}
 	~Bullets() {}
-	void draw(HDC hdc)
+	void draw(HDC hdc) const
 	{
 		Ellipse(hdc, vec.x - r, vec.y - r, vec.x + r, vec.y + r);
 	}
-	void Move() //여기가 움직이는거
+	void Move() //Here is for bullets to move
 	{
-		Vec2<float> temp = vec.Normalize( bar.Get_x(), bar.Get_y(), vec.x, vec.y );
- 		vec.x = vec.x + temp.x * 10;
-		vec.y = vec.y - temp.y * 10;
+ 		vec.x = vec.x + dir.x * 10;
+		vec.y = vec.y - dir.y * 10;
 	}
 	RECT GetRect() const
 	{
@@ -39,10 +41,10 @@ public:
 	}
 private:
 	Vec2<float> vec;
+	Vec2<float> dir; //direction
 	float r = 10;//bullets의 좌표와 반지름
 	float vel = 10.0f;
 	barrel bar;
 	Player p;
-	Timer time;
 };
 
