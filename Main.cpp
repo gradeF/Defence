@@ -153,7 +153,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     Player player(510, 410);
     static barrel bar( 510, 410, 80 );
     //static Bullets bullet(510, 410);
-    static std::vector<Bullets> bullet;
+    static std::vector<Bullets> bullets;
     static int space;
     static int health = 3;
     static bool check = false;
