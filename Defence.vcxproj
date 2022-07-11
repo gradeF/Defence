@@ -142,11 +142,11 @@
     <ClInclude Include="Bullets.h" />
     <ClInclude Include="hey.h" />
     <ClInclude Include="Main.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Wall.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="Object.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Vec2.h" />
@@ -155,10 +155,10 @@
     <ClCompile Include="Bullets.cpp" />
     <ClCompile Include="hey.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Wall.cpp" />
     <ClCompile Include="Enemy.cpp" />
-    <ClCompile Include="Object.cpp" />
     <ClCompile Include="Vec2.cpp" />
   </ItemGroup>
   <ItemGroup>

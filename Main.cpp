@@ -2,7 +2,7 @@
 //
 
 #include "framework.h"
-#include "Object.h"
+#include "Player.h"
 #include "Main.h"
 #include "Enemy.h"
 #include "Bullets.h"
@@ -150,21 +150,32 @@ INT_PTR CALLBACK Dlg_Proc(HWND hWnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     HDC hdc;
-    player player(510, 410, 40);
+    Player player(510, 410);
     static barrel bar( 510, 410, 80 );
-    static Bullets bullet(510, 410);
+    //static Bullets bullet(510, 410);
+    static std::vector<Bullets> bullet;
     static int space;
     static int health = 3;
     static bool check = false;
+    static int count = 0;
+    static Wall walls[8];
+    static int who = 0;
     //wall walls;
     //static std::vector<wall> walls;
-    wall wall( 70, 480, 140,40 );
+    //wall wall( 70, 480, 140,40 );
     static Enemy enemy;
     switch (message)
     {
     case WM_CREATE:
         SetTimer(hWnd, 1, 70, NULL);
         space = 0;
+        walls[0] = { 70, 480, 140,40 };
+        for (int i = 1; i < 8; i++)
+        {
+            float width = 140.0f;
+            walls[i] = { 70 + (width*i), 480, 140, 40 };
+        }     
+            //walls[1] = { 70 + 140, 480, 140, 40 };//center, widht, height
         //walls.resize( 256 );
         //walls[0] = { 70,480,140,40 };
         break;
@@ -197,15 +208,24 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             InvalidateRect(hWnd, NULL, TRUE);
             break;
         case VK_SPACE:
+            count++;
+            bullet[count] = { bar.Get_point_x(), bar.Get_point_y() };
             space = 1;
-            InvalidateRect(hWnd, NULL, TRUE);
+            //InvalidateRect(hWnd, NULL, TRUE);
             break;
         }
         break;
     case WM_TIMER:
         enemy.Move();
-        bullet.Move();
-        check = wall.CheckEnemy(enemy, wall);
+        bullet[count].Move();
+       /* for (int i = 0; i < 8; i++)
+        {
+            check = walls[i].CheckEnemy( enemy, walls[i] );
+            if (check)
+            {
+                return who = i;
+            }
+        }*/
         InvalidateRect(hWnd, NULL, TRUE);
         break;
     case WM_PAINT:
@@ -219,15 +239,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             player.Draw( hdc );
             if (space ==1)
             {
-                bullet.draw(hdc);
+            bullet[count].draw(hdc);
             } 
-            //for (int i = 0; i < 8; i++)
-                //walls[i].Draw( hdc,3 );
-            if (check == true)
+            if (who != NULL )
             {
                 health -= 1;
+                walls[who].Draw(hdc,health);
             }
-            wall.Draw(hdc,health);
+                
             enemy.Draw(hdc);
             
             EndPaint(hWnd, &ps);

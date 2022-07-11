@@ -61,7 +61,7 @@ public:
 	{
 		return sqrt(x * x + y * y);
 	}
-	Vec2 Normalize()
+	Vec2 Normalize( float x1, float y1, float x2, float y2)
 	{
 		Vec2 norm;
 		norm.x = x / sqrt(x * x + y * y);

@@ -1,5 +1,6 @@
 #pragma once
 #include "framework.h"
+#include "Bullets.h"
 #include <random>
 class Enemy
 {
@@ -58,6 +59,18 @@ public:
 	void Move()
 	{
 		y += 3.0f;
+	}
+	void CheckBullets(const Bullets& bullets, const Enemy& en)
+	{
+		const RECT bullet = bullets.GetRect();
+		const RECT enemy = en.GetRect();
+		if (bullet.left< enemy.right &&
+			bullet.top < enemy.bottom &&
+			bullet.right > enemy.left &&
+			bullet.bottom > enemy.right)
+		{
+
+		}
 	}
 private:
 	float width;

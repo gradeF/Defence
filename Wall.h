@@ -4,10 +4,10 @@
 #include "Enemy.h"
 #include <vector>
 
-class wall
+class Wall
 {
 public:
-	wall()
+	Wall()
 		:
 		center(0.0f, 0.0f),
 		width( 1 ),
@@ -18,7 +18,7 @@ public:
 		points.resize( 4 );
 		Setpoints();
 	}
-	wall( const Vec2<float> center, float width, float height )
+	Wall( const Vec2<float> center, float width, float height )
 		:
 		center(center),
 		width( width ),
@@ -29,7 +29,7 @@ public:
 		points.resize( 4 );
 		Setpoints();
 	}
-	wall( float x, float y, float width, float height )
+	Wall( float x, float y, float width, float height )
 		:
 		center(x,y),
 		width( width ),
@@ -40,6 +40,7 @@ public:
 		points.resize( 4 );
 		Setpoints();
 	}
+	~Wall() {}
 	RECT GetRect() const
 	{
 		return { (long)left, (long)top, (long)right, (long)bottom };
@@ -102,7 +103,7 @@ public:
 			break;
 		}
 	}
-	bool CheckEnemy(const Enemy& en, const wall& wa )
+	bool CheckEnemy(const Enemy& en, const Wall& wa )
 	{
 		RECT enR = en.GetRect();
 		RECT waR = wa.GetRect();

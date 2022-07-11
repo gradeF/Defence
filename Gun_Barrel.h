@@ -3,7 +3,7 @@
 #include "framework.h"
 #include "Vec2.h"
 
-#include <cmath>
+#include <math.h>
 class Gun_Barrel
 {
 public:

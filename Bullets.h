@@ -2,8 +2,9 @@
 #include "framework.h"
 #include "Enemy.h"
 #include "Gun_Barrel.h"
-#include "Object.h"
+#include "Player.h"
 #include "Vec2.h"
+#include "Timer.h"
 class Bullets
 {
 public:
@@ -26,16 +27,22 @@ public:
 	{
 		Ellipse(hdc, vec.x - r, vec.y - r, vec.x + r, vec.y + r);
 	}
-	void Move()
+	void Move() //여기가 움직이는거
 	{
-		vec.x = vec.x + vel;
-		vec.y = vec.y - vel;
+		Vec2<float> temp = vec.Normalize( bar.Get_x(), bar.Get_y(), vec.x, vec.y );
+ 		vec.x = vec.x + temp.x * 10;
+		vec.y = vec.y - temp.y * 10;
+	}
+	RECT GetRect() const
+	{
+		return { (long)(vec.x-r), (long)(vec.y - r) ,(long)(vec.x + r) ,(long)(vec.x + r) };
 	}
 private:
 	Vec2<float> vec;
 	float r = 10;//bullets의 좌표와 반지름
 	float vel = 10.0f;
 	barrel bar;
-	player p;
+	Player p;
+	Timer time;
 };
 
