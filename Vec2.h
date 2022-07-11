@@ -12,14 +12,14 @@ public:
 		x(x), y(y)
 	{}
 	~Vec2() {};
-	Vec2& operator==(const Vec2& vec)
+	bool operator==(const Vec2& vec)
 	{
 		if (x == vec.x && y == vec.y)
 			return true;
 		else
 			return false;
 	}
-	Vec2& operator!=(const Vec2& vec)
+	bool operator!=(const Vec2& vec)
 	{
 		if (x != vec.x && y != vec.y)
 			return true;
@@ -61,12 +61,20 @@ public:
 	{
 		return sqrt(x * x + y * y);
 	}
-	Vec2 Normalize( float x1, float y1, float x2, float y2)
+	Vec2 Get_Normalize(const Vec2<float>& vec )
 	{
+		const T length = vec.GetLength();
 		Vec2 norm;
-		norm.x = x / sqrt(x * x + y * y);
-		norm.y = y / sqrt(x * x + y * y);
+		norm.x = vec.x / length;
+		norm.y = vec.y / length;
 		return norm;
+	}
+	Vec2& Normalize()
+	{
+		const T length = this->GetLength();
+		x = x / length;
+		y = y / length;
+		return *this;
 	}
 	float Rotate(float radian)
 	{

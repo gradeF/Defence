@@ -81,11 +81,11 @@ public:
 			point.x = 624;
 		}
 	}
-	float Get_point_x() const
+	float Get_barrel_x() const
 	{
 		return point.x;
 	}
-	float Get_point_y() const
+	float Get_barrel_y() const
 	{
 		return point.y;
 	}

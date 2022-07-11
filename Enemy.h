@@ -6,59 +6,28 @@ class Enemy
 {
 public:
 	Enemy()
-	{
-		width = 40.0f;
-		height = 40.0f;
-		std::random_device rd;
-		std::mt19937 rng(rd());
-		std::uniform_real_distribution<float> RotateGen(RotateMin, RotateMax);
-		/*x = RotateGen(rng);*/
-		x = 100.0f;
-		y = 100.0f;
-	}
-	Enemy(float width, float height)
+		:
+		width(0.0f),
+		height(0.0f),
+		center(0.0f,0.0f)
+	{}
+	Enemy(float width, float height, const Vec2<float>&center)
 		:
 		width(width),
-		height(height)
-	{
-		std::random_device rd;
-		std::mt19937 rng(rd());
-		std::uniform_real_distribution<float> RotateGen(RotateMin, RotateMax);
-		//x = RotateGen(rng);
-		x = 100.0f;
-		y = 100.0f;
-	}
-	~Enemy()
-	{
-
-	}
-	float GetX() const
-	{
-		return x;
-	}
-	float GetY() const
-	{
-		return y;
-	}
-	void SetX(float x)
-	{
-		this->x = x;
-	}
-	void SetY(float y)
-	{
-		this->y = y;
-	}
+		height(height),
+		center(center)
+	{}
 	RECT GetRect() const
 	{
-		return { (long)(x - (width * 0.5f)), (long)(y - (height * 0.5f)), (long)(x + (width * 0.5f)), (long)(y + (height * 0.5f)) };
+		return { (long)(center.x - (width * 0.5f)), (long)(center.y - (height * 0.5f)), (long)(center.x + (width * 0.5f)), (long)(center.y + (height * 0.5f)) };
 	}
 	void Draw(HDC hdc)
 	{
-		Rectangle(hdc, x - (width * 0.5f), y - (height * 0.5f), x + (width * 0.5f), y + (height * 0.5f));
+		Rectangle(hdc, center.x - (width * 0.5f), center.y - (height * 0.5f), center.x + (width * 0.5f), center.y + (height * 0.5f));
 	}
 	void Move()
 	{
-		y += 3.0f;
+		center.y += 3.0f;
 	}
 	void CheckBullets(const Bullets& bullets, const Enemy& en)
 	{
@@ -72,12 +41,16 @@ public:
 
 		}
 	}
+
+private:
+	static constexpr float gen_x_min = 100.0f;
+	static constexpr float gen_x_max = 400.0f;
+	static constexpr float speed = 10.0f;
+
 private:
 	float width;
 	float height;
-	float x, y;
-	float RotateMin = 100.0f;
-	float RotateMax = 400.0f;
+	Vec2<float> center;
 	bool alive = true;
 };
 

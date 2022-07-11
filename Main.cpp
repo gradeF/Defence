@@ -7,6 +7,7 @@
 #include "Enemy.h"
 #include "Bullets.h"
 #include "Wall.h"
+#include "FrameTimer.h"
 
 #define MAX_LOADSTRING 100
 
@@ -159,10 +160,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     static int count = 0;
     static Wall walls[8];
     static int who = 0;
+    static FrameTimer frametimer;
     //wall walls;
     //static std::vector<wall> walls;
     //wall wall( 70, 480, 140,40 );
-    static Enemy enemy;
+    static std::vector<Enemy> enemy;
     switch (message)
     {
     case WM_CREATE:
@@ -174,9 +176,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             float width = 140.0f;
             walls[i] = { 70 + (width*i), 480, 140, 40 };
         }     
-            //walls[1] = { 70 + 140, 480, 140, 40 };//center, widht, height
-        //walls.resize( 256 );
-        //walls[0] = { 70,480,140,40 };
         break;
     
     case WM_COMMAND:
@@ -207,35 +206,40 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             InvalidateRect(hWnd, NULL, TRUE);
             break;
         case VK_SPACE:
-            /*bullet[count] = { bar.Get_point_x(), bar.Get_point_y() };*/
-            bullets.emplace_back( ); //??? 510은 x, 410은 y
+            const Vec2<float> center = {player.Get_x(), player.Get_y()};
+            const Vec2<float> endpoint = { bar.Get_barrel_x(), bar.Get_barrel_y() };
+            const Vec2<float> direction = (endpoint - center).Normalize();
+            bullets.emplace_back( endpoint, direction ); 
             space = 1;
-            //InvalidateRect(hWnd, NULL, TRUE);
+            InvalidateRect(hWnd, NULL, TRUE);
             break;
         }
         break;
     case WM_TIMER:
-        enemy.Move();
-        for (auto& e :bullets)
+    {
+        float dt = frametimer.Mark(); //초 간격(deltaTime)
+
+        for (auto& e : bullets)
         {
             e.Move();
         }
-        InvalidateRect(hWnd, NULL, TRUE);
+    InvalidateRect( hWnd, NULL, TRUE ); 
+    }
         break;
     case WM_PAINT:
         {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
             // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다...
-            
-            bar.Draw( hdc );
-            
-            player.Draw( hdc );
-
             for ( const auto& e : bullets)
             {
                 e.draw( hdc );
             }
+            bar.Draw( hdc );
+            
+            player.Draw( hdc );
+
+            
             
             if (who != NULL )
             {
@@ -243,7 +247,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 walls[who].Draw(hdc,health);
             }
                 
-            enemy.Draw(hdc);
+           
             
             EndPaint(hWnd, &ps);
         }
