@@ -153,7 +153,7 @@ INT_PTR CALLBACK Dlg_Proc(HWND hWnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
 
 VOID CALLBACK TimmerProc( HWND hWnd, UINT, WPARAM, DWORD )
 {
-    InvalidateRect( hWnd, NULL, TRUE );
+    InvalidateRect( hWnd, NULL,FALSE );
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

@@ -4,6 +4,7 @@
 #include "framework.h"
 #include <cmath>
 #include <vector>
+
 class Player
 {
 public:
@@ -45,7 +46,7 @@ public:
 		Player(),
 		point( 0.0f, 0.0f ),
 		//temp(0.0f, 0.f),
-		angle( M_PI * 15.0f / 180.0f ),
+		angle( M_PI * 45.0f / 180.0f ),
 		r( 1 )
 	{}
 	barrel( const Vec2<float>& center, Vec2<float> point, float r )
@@ -53,7 +54,7 @@ public:
 		Player( center ),
 		point( point ),
 		//temp(point),
-		angle( M_PI * 15.0f / 180.0f ),
+		angle( M_PI * 45.0f / 180.0f ),
 		r( r )
 	{}
 	barrel( float x, float y, float r )
@@ -61,7 +62,7 @@ public:
 		Player( x, y ),
 		point( x + r, y - r ),
 		//temp(x+r, y-r),
-		angle( M_PI * 15.0f / 180.0f ),
+		angle( M_PI * 45.0f / 180.0f ),
 		r( r )
 	{}
 	void Draw( HDC hdc ) const
@@ -69,16 +70,28 @@ public:
 		MoveToEx( hdc, center.x, center.y, NULL );
 		LineTo( hdc, point.x, point.y );
 	}
-	void RotateRight()
+	void RotateRight(float dt)
 	{
-
+		float rightangle = angle * dt;
 		Vec2<float> temp = point - center;
-		point.x = (temp.x * cos( angle )) - (temp.y * sin( angle )) + center.x;
-		point.y = (temp.x * sin( angle )) + (temp.y * cos( angle )) + center.y;
+		point.x = (temp.x * cos( rightangle )) - (temp.y * sin( rightangle )) + center.x;
+		point.y = (temp.x * sin( rightangle )) + (temp.y * cos( rightangle )) + center.y;
 		if (point.y > 360)
 		{
 			point.y = 360;
 			point.x = 624;
+		}
+	}
+	void RotateLeft(float dt)
+	{
+		float leftangle = angle * dt;
+		Vec2<float> temp = point - center;
+		point.x = (temp.x * cos( -leftangle )) - (temp.y * sin( -leftangle )) + center.x;
+		point.y = (temp.x * sin( -leftangle )) + (temp.y * cos( -leftangle )) + center.y;
+		if (point.y > 360)
+		{
+			point.y = 360;
+			point.x = 399;
 		}
 	}
 	float Get_barrel_x() const
@@ -93,18 +106,7 @@ public:
 	{
 		return r;
 	}
-	void RotateLeft()
-	{
-
-		Vec2<float> temp = point - center;
-		point.x = (temp.x * cos( -angle )) - (temp.y * sin( -angle )) + center.x;
-		point.y = (temp.x * sin( -angle )) + (temp.y * cos( -angle )) + center.y;
-		if (point.y > 360)
-		{
-			point.y = 360;
-			point.x = 399;
-		}
-	}
+	
 private:
 	Vec2<float> point;
 	float angle;
