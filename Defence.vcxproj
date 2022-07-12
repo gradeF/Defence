@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Bullets.h" />
+    <ClInclude Include="FileManager.h" />
     <ClInclude Include="FrameTimer.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="hey.h" />

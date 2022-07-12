@@ -8,6 +8,7 @@
 #include <string>
 
 GameManager game;
+bool isGameFinished = false;
 #define MAX_LOADSTRING 100
 
 // 전역 변수:
@@ -22,6 +23,7 @@ LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 VOID CALLBACK TimmerProc(HWND, UINT, WPARAM, DWORD);
 BOOL    CALLBACK    StartDialogProc( HWND, UINT, WPARAM, LPARAM );
+BOOL    CALLBACK    RankDialogProc( HWND, UINT, WPARAM, LPARAM );
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -193,8 +195,64 @@ BOOL CALLBACK StartDialogProc( HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPara
     return FALSE;
 }
 
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+BOOL CALLBACK RankDialogProc( HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam )
 {
+    UNREFERENCED_PARAMETER( lParam );
+    switch (iMsg)
+    {
+    case WM_INITDIALOG:
+        {
+            auto rank = game.GetRank();
+
+            std::wstring topRankers[3];
+
+            int i = 0;
+            for (auto rIt = rank.rbegin(); i < 3 && rIt != rank.rend(); ++rIt)
+            {
+                for (const auto& str : rIt->second)
+                {
+                    if (i >= 3)
+                    {
+                        break;
+                    }
+                    topRankers[i] = str + L": " + std::to_wstring(rIt->first);
+                    ++i;
+                }
+            }
+
+            const std::wstring curPlayerStr = game.GetUserID() + L": " + std::to_wstring(game.GetScore());
+            SetDlgItemText( hDlg, IDC_RESULT, curPlayerStr.c_str() );
+            SetDlgItemText( hDlg, IDC_STATIC_RANK1, topRankers[0].c_str() );
+            SetDlgItemText( hDlg, IDC_STATIC_RANK2, topRankers[1].c_str() );
+            SetDlgItemText( hDlg, IDC_STATIC_RANK3, topRankers[2].c_str() );
+        }
+        break;
+
+    case WM_COMMAND:
+        switch (LOWORD( wParam ))
+        {
+
+        case IDOK:
+        case IDC_BUTTON_EXIT:
+        case IDCANCEL:
+            EndDialog( hDlg, LOWORD( wParam ) );
+            game.SaveDataFromRank();
+            PostQuitMessage( 0 );
+            return FALSE;
+            break;
+        }
+        break;
+    }
+    return FALSE;
+}
+
+LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
+{
+    if (game.IsGameEnd() && !isGameFinished)
+    {
+        DialogBox( hInst, MAKEINTRESOURCE( IDD_DIALOG_END ), hWnd, RankDialogProc );
+        isGameFinished = true;
+    }
     switch (message)
     {
     case WM_CREATE:

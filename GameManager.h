@@ -8,6 +8,9 @@
 #include "FrameTimer.h"
 #include <algorithm>
 #include <string>
+#include <vector>
+#include <map>
+#include "FileManager.h"
 
 class GameManager
 {
@@ -21,15 +24,18 @@ public:
 public:
     GameManager()
         :
-        player(510, 410),
-        bar(510,410, 80),
-        walls(8)
+        player( 510, 410 ),
+        bar( 510, 410, 80 ),
+        walls( 8 ),
+        fileManager( L"Ranking.txt" )
     {
         for (int i = 0; i < 8; i++)
         {
             float width = 140.0f;
             walls[i] = { 70 + (width*i), 480, 140, 40 };
         }  
+
+        GetRankingFromData();
     }
     void Update()
     { 
@@ -51,6 +57,10 @@ public:
                     EraseIf( bullets );
                     EraseIf( enemy );
                     EraseIf( walls );
+                    if (walls.size() == 0)
+                    {
+                        mode = GameMode::GameEnd;
+                    }
                 }
                 else
                 {
@@ -137,11 +147,58 @@ public:
     {
         return playerID;
     }
+    int GetScore() const
+    {
+        return score;
+    }
 
     void SetGameModeMainGame()
     {
         mode = GameMode::MainGame;
     }
+    bool IsGameEnd() const
+    {
+        return mode == GameMode::GameEnd;
+    }
+
+    auto GetRank() const
+    {
+        return rank;
+    }
+
+    void GetRankingFromData()
+    {
+        auto lines = fileManager.GetLineVector();
+
+        for (const auto& line : lines)
+        {
+            auto pos = line.find( L" " );
+            int scoreData = std::stoi( line.substr( pos, line.size() ) );
+            const std::wstring nameData = line.substr( 0, pos );
+
+            rank[scoreData].push_back( nameData );
+        }
+    }
+
+    void SaveDataFromRank()
+    {
+        std::vector<std::wstring> lines;
+
+        rank[score].push_back( playerID );
+
+        for (auto it = rank.begin(); it != rank.end(); ++it)
+        {
+            for (const auto& str : it->second)
+            {
+                lines.push_back( str + L" " );
+                lines.push_back( std::to_wstring( it->first ) + L"\n" );
+            }
+        }
+
+        fileManager.SaveToFile( lines );
+    }
+
+
 private:
     void InputStartKey()
     {
@@ -195,6 +252,7 @@ private:
             if (e.CheckBottom( clientRect ))
             {
                 e.Kill();
+                mode = GameMode::GameEnd;
             }
             for (auto& b : bullets)
             {
@@ -239,6 +297,7 @@ private:
         container.erase( newEnd, container.end() );
     }
 
+
 public:
     RECT clientRect;
 
@@ -252,6 +311,8 @@ private:
     HBITMAP hDoubleBufferImage;
     GameMode mode = GameMode::GameStart;
     std::wstring playerID;
+    std::map<int, std::vector<std::wstring>> rank;
+    FileManager fileManager;
 
     int score = 0;
     int health = 3;
