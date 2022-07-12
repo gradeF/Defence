@@ -75,7 +75,7 @@ public:
                 {
                     HDC hMemDC;
                     HBITMAP hOldbitmap;
-
+                    
                     hMemDC = CreateCompatibleDC( hdc );
                     if (hDoubleBufferImage == NULL)
                     {
@@ -84,6 +84,11 @@ public:
                     hOldbitmap = (HBITMAP)SelectObject( hMemDC, hDoubleBufferImage );
 
                     FillRect( hMemDC, &clientRect, (HBRUSH)GetStockObject( WHITE_BRUSH ) );
+
+                    const std::wstring idStr = L"ID: " + playerID;
+                    TextOut( hMemDC, 10, 10, idStr.c_str(), idStr.size() );
+                    const std::wstring scoreStr = L"Score: " + std::to_wstring( score );
+                    TextOut( hMemDC, 310, 10, scoreStr.c_str(), scoreStr.size() );
 
                     for (const auto& e : bullets)
                     {
@@ -197,6 +202,7 @@ private:
                 {
                     e.Kill();
                     b.Kill();
+                    score += 10;
                 }
             }
             for (auto& w : walls)
@@ -245,8 +251,9 @@ private:
     std::vector<Wall> walls;
     HBITMAP hDoubleBufferImage;
     GameMode mode = GameMode::GameStart;
-
     std::wstring playerID;
+
+    int score = 0;
     int health = 3;
     bool startcheck = false;
     int count = 0;
