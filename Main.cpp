@@ -5,6 +5,7 @@
 #include "Main.h"
 
 #include "GameManager.h"
+#include <string>
 
 GameManager game;
 #define MAX_LOADSTRING 100
@@ -19,8 +20,8 @@ ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
-INT_PTR CALLBACK Dlg_Proc(HWND hWnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
 VOID CALLBACK TimmerProc(HWND, UINT, WPARAM, DWORD);
+BOOL    CALLBACK    StartDialogProc( HWND, UINT, WPARAM, LPARAM );
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -131,29 +132,61 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //  WM_DESTROY  - 종료 메시지를 게시하고 반환합니다.
 //
 //
-INT_PTR CALLBACK Dlg_Proc(HWND hWnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
-{
-    
-    switch (iMsg)
-    {
-    case WM_INITDIALOG:
-        return 1;
-    case WM_COMMAND:
-        switch (LOWORD(wParam))
-        {
-        case IDOK:
-            GetDlgItemText(hWnd, IDC_IDBOX, ID, 100);
-            EndDialog(hWnd, 0);
-            break;
-        }
-        break;
-    }
-    return 0;
-}
 
 VOID CALLBACK TimmerProc( HWND hWnd, UINT, WPARAM, DWORD )
 {
     InvalidateRect( hWnd, NULL,FALSE );
+}
+
+BOOL CALLBACK StartDialogProc( HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam )
+{
+    UNREFERENCED_PARAMETER( lParam );
+    switch (iMsg)
+    {
+    case WM_INITDIALOG:
+        {
+            HWND hBtn = GetDlgItem( hDlg, IDOK );
+            EnableWindow( hBtn, FALSE );
+        }
+        return TRUE;
+
+    case WM_COMMAND:
+        switch (LOWORD(wParam))
+        {
+        case IDC_BUTTON_INPUT:
+            {
+                wchar_t  word[256];
+                GetDlgItemText( hDlg, IDC_IDBOX, word, 256 );
+                game.SetUserID( word );
+
+                if(game.GetUserID().size() != 0)
+                {
+                    HWND hBtn = GetDlgItem( hDlg, IDOK );
+                    EnableWindow( hBtn, TRUE );
+                }
+                else
+                {
+                    HWND hBtn = GetDlgItem( hDlg, IDOK );
+                    EnableWindow( hBtn, FALSE );
+                }
+            }
+            break;
+
+        case IDOK:
+            EndDialog( hDlg, LOWORD( wParam ) );
+            return TRUE;
+            break;
+
+        case IDCANCEL:
+            EndDialog( hDlg, LOWORD( wParam ) );
+            PostQuitMessage( 0 );
+            return FALSE;
+            break;
+        }
+
+        break;
+    }
+    return FALSE;
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -163,7 +196,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_CREATE:
         SetTimer(hWnd, 1, 0, TimmerProc );
         GetClientRect( hWnd, &game.clientRect);
-        //space = 0;
+        DialogBox( hInst, MAKEINTRESOURCE( IDD_DIALOG_START ), hWnd, StartDialogProc );
            
         break;
     case WM_SIZE:

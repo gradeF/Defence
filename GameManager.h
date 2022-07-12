@@ -7,6 +7,7 @@
 #include "Wall.h"
 #include "FrameTimer.h"
 #include <algorithm>
+#include <string>
 
 class GameManager
 {
@@ -106,6 +107,16 @@ public:
             break;
         }
     }
+
+    void SetUserID( const std::wstring& id ) 
+    {
+        playerID = id;
+    }
+    std::wstring GetUserID() const
+    {
+        return playerID;
+    }
+
 private:
     void KeyboardInput(float dt)
     {
@@ -204,6 +215,7 @@ private:
     HBITMAP hDoubleBufferImage;
     GameMode mode = GameMode::GameStart;
 
+    std::wstring playerID;
     int health = 3;
     bool check = false;
     int count = 0;
