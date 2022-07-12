@@ -173,8 +173,12 @@ BOOL CALLBACK StartDialogProc( HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lPara
             break;
 
         case IDOK:
-            EndDialog( hDlg, LOWORD( wParam ) );
-            return TRUE;
+            {
+                EndDialog( hDlg, LOWORD( wParam ) );
+                game.SetGameModeMainGame();
+               
+                return TRUE;
+            }
             break;
 
         case IDCANCEL:

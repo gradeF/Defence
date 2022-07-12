@@ -39,15 +39,23 @@ public:
             break;
         case GameManager::GameMode::MainGame:
             {
-                float dt = frametimer.Mark(); //초 간격(deltaTime)
-                KeyboardInput( dt );
-                GenerateEnemies( dt);
-                UpdateEnemies( dt );
-                UpdateBullet( dt );
+                float dt = frametimer.Mark();
+                if (startcheck)
+                {
+                     //초 간격(deltaTime)
+                    KeyboardInput( dt );
+                    GenerateEnemies( dt);
+                    UpdateEnemies( dt );
+                    UpdateBullet( dt );
                 
-                EraseIf( bullets );
-                EraseIf( enemy );
-                EraseIf( walls );
+                    EraseIf( bullets );
+                    EraseIf( enemy );
+                    EraseIf( walls );
+                }
+                else
+                {
+                    InputStartKey();
+                }
             }
             break;
         case GameManager::GameMode::GameEnd:
@@ -63,44 +71,52 @@ public:
             break;
         case GameManager::GameMode::MainGame:
             {
-                HDC hMemDC;
-                HBITMAP hOldbitmap;
-
-                hMemDC = CreateCompatibleDC( hdc );
-                if (hDoubleBufferImage == NULL)
+                if (startcheck)
                 {
-                    hDoubleBufferImage = CreateCompatibleBitmap( hdc, clientRect.right, clientRect.bottom );
+                    HDC hMemDC;
+                    HBITMAP hOldbitmap;
+
+                    hMemDC = CreateCompatibleDC( hdc );
+                    if (hDoubleBufferImage == NULL)
+                    {
+                        hDoubleBufferImage = CreateCompatibleBitmap( hdc, clientRect.right, clientRect.bottom );
+                    }
+                    hOldbitmap = (HBITMAP)SelectObject( hMemDC, hDoubleBufferImage );
+
+                    FillRect( hMemDC, &clientRect, (HBRUSH)GetStockObject( WHITE_BRUSH ) );
+
+                    for (const auto& e : bullets)
+                    {
+                        e.draw( hMemDC );
+                    }
+                    for (const auto& e : walls)
+                    {
+                        e.DrawRect( hMemDC );
+                    }
+                    bar.Draw( hMemDC );
+
+                    player.Draw( hMemDC );
+
+                    for (const auto& e : enemy)
+                    {
+                        e.Draw( hMemDC );
+                    }
+
+                    if (who != NULL)
+                    {
+                        health -= 1;
+                        walls[who].Draw( hMemDC, health );
+                    }
+
+                    BitBlt( hdc, 0, 0, clientRect.right, clientRect.bottom, hMemDC, 0, 0, SRCCOPY );
+                    SelectObject( hMemDC, hOldbitmap );
+                    DeleteObject( hMemDC );
                 }
-                hOldbitmap = (HBITMAP)SelectObject( hMemDC, hDoubleBufferImage );
-
-                FillRect( hMemDC, &clientRect, (HBRUSH)GetStockObject( WHITE_BRUSH ) );
-
-                for (const auto& e : bullets)
+                else
                 {
-                    e.draw( hMemDC );
+                    const std::wstring str = L"Press Enter to Start!";
+                    TextOut( hdc, clientRect.right * 0.5 - 80, clientRect.bottom * 0.5, str.c_str(), str.size() );
                 }
-                for (const auto& e : walls)
-                {
-                    e.DrawRect( hMemDC );
-                }
-                bar.Draw( hMemDC );
-
-                player.Draw( hMemDC );
-
-                for (const auto& e : enemy)
-                {
-                    e.Draw( hMemDC );
-                }
-
-                if (who != NULL)
-                {
-                    health -= 1;
-                    walls[who].Draw( hMemDC, health );
-                }
-
-                BitBlt( hdc, 0, 0, clientRect.right, clientRect.bottom, hMemDC, 0, 0, SRCCOPY );
-                SelectObject( hMemDC, hOldbitmap );
-                DeleteObject( hMemDC );
             }
             break;
         case GameManager::GameMode::GameEnd:
@@ -117,10 +133,23 @@ public:
         return playerID;
     }
 
+    void SetGameModeMainGame()
+    {
+        mode = GameMode::MainGame;
+    }
 private:
+    void InputStartKey()
+    {
+        if (GetAsyncKeyState( VK_RETURN ) & 0x8000)
+        {
+            startcheck = true;
+        }
+
+    }
     void KeyboardInput(float dt)
     {
         bullet_gen_time += dt;
+
         if (GetAsyncKeyState( VK_LEFT ) & 0x8000) //input key
         {
             bar.RotateLeft(dt);
@@ -141,6 +170,8 @@ private:
             }
         }
     }
+
+    
 
     void GenerateEnemies(float dt)
     {
@@ -217,7 +248,7 @@ private:
 
     std::wstring playerID;
     int health = 3;
-    bool check = false;
+    bool startcheck = false;
     int count = 0;
     int who = 0;
     float enemy_gen_time = 0;
