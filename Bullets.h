@@ -35,10 +35,26 @@ public:
 	{
 		return { (long)(vec.x-r), (long)(vec.y - r) ,(long)(vec.x + r) ,(long)(vec.x + r) };
 	}
+	bool CheckBorder(const RECT border) const
+	{
+		const RECT thisR = GetRect();
+		return (thisR.left < border.left ||
+				thisR.right> border.right ||
+				thisR.top < border.top);
+	}
+	bool IsAlive() const
+	{
+		return alive;
+	}
+	void Kill() 
+	{
+		alive = false;
+	}
 private:
 	Vec2<float> vec;
 	Vec2<float> dir; //direction
 	float r = 10; //Radius of bullet
-	float vel = 10.0f; //velocity of bullet
+	float vel = 100.0f; //velocity of bullet
+	bool alive = true;
 };
 

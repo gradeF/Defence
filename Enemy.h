@@ -5,23 +5,18 @@
 class Enemy
 {
 public:
-	Enemy()
-		:
-		width(0.0f),
-		height(0.0f),
-		center(0.0f,0.0f)
-	{}
-	Enemy(float width, float height, const Vec2<float>&center)
-		:
-		width(width),
-		height(height),
-		center(center)
-	{}
+	Enemy(float max)
+	{
+		std::random_device rd;
+		std::mt19937 rng( rd() );
+		std::uniform_real_distribution<float> gen_x(0.0f, max );
+		center = { gen_x( rng ), 0.0f };
+	}
 	RECT GetRect() const
 	{
 		return { (long)(center.x - (width * 0.5f)), (long)(center.y - (height * 0.5f)), (long)(center.x + (width * 0.5f)), (long)(center.y + (height * 0.5f)) };
 	}
-	void Draw(HDC hdc)
+	void Draw(HDC hdc) const
 	{
 		Rectangle(hdc, center.x - (width * 0.5f), center.y - (height * 0.5f), center.x + (width * 0.5f), center.y + (height * 0.5f));
 	}
@@ -43,15 +38,23 @@ public:
 		const RECT thisR = GetRect();
 		return (thisR.bottom > winR.bottom);
 	}
+	bool IsAlive() const
+	{
+		return alive;
+	}
+	void Kill()
+	{
+		alive = false;
+	}
 private:
-	static constexpr float gen_x_min = 100.0f;
-	static constexpr float gen_x_max = 400.0f;
-	static constexpr float speed = 10.0f;
+	
+	static constexpr float speed = 100.0f;
+	static constexpr float width = 40.0f;
+	static constexpr float height = 40.0f;
 
 private:
-	float width;
-	float height;
 	Vec2<float> center;
 	bool alive = true;
+
 };
 

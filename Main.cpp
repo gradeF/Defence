@@ -8,6 +8,7 @@
 #include "Bullets.h"
 #include "Wall.h"
 #include "FrameTimer.h"
+#include <algorithm>
 
 #define MAX_LOADSTRING 100
 
@@ -154,30 +155,34 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     Player player(510, 410);
     static barrel bar( 510, 410, 80 );
     static std::vector<Bullets> bullets;
+    static std::vector<Enemy> enemy;
+    static FrameTimer frametimer;
+    static std::vector<Wall> walls(8);
+    static RECT clientRect;
+
     static int space;
     static int health = 3;
     static bool check = false;
     static int count = 0;
-    static Wall walls[8];
     static int who = 0;
-    static FrameTimer frametimer;
-    //wall walls;
-    //static std::vector<wall> walls;
-    //wall wall( 70, 480, 140,40 );
-    static std::vector<Enemy> enemy;
+
+    static float gen_time = 0;
+    
     switch (message)
     {
     case WM_CREATE:
-        SetTimer(hWnd, 1, 70, NULL);
+        SetTimer(hWnd, 1, 0, NULL);
+        GetClientRect( hWnd, &clientRect );
         space = 0;
-        walls[0] = { 70, 480, 140,40 };
-        for (int i = 1; i < 8; i++)
+        for (int i = 0; i < 8; i++)
         {
             float width = 140.0f;
             walls[i] = { 70 + (width*i), 480, 140, 40 };
         }     
         break;
-    
+    case WM_SIZE:
+        GetClientRect( hWnd, &clientRect );
+        break;
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);
@@ -218,11 +223,72 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     case WM_TIMER:
     {
         float dt = frametimer.Mark(); //초 간격(deltaTime)
+        gen_time += dt;
 
+        if (gen_time >= 2.0f)
+        {
+            enemy.emplace_back((float)clientRect.right);
+            gen_time = 0.0f;
+        }
+        for (auto& e : enemy)
+        {
+            e.Move( dt );
+            if (e.CheckBottom( clientRect ))
+            {
+                e.Kill();
+            }
+            for (auto& b : bullets)
+            {
+                if (e.CheckCollision( b.GetRect() ))
+                {
+                    e.Kill();
+                    b.Kill();
+                }
+            }
+            for (auto& w : walls)
+            {
+                if (e.CheckCollision( w.GetRect() ))
+                {
+                    e.Kill();
+                    
+                    w.Damaged(1);
+                    
+                }
+            }
+        }
         for (auto& e : bullets)
         {
             e.Move( dt );
+            if (e.CheckBorder( clientRect )) //if(true)
+            {
+                e.Kill(); //alive comes false
+            }
         }
+
+        auto newend = std::remove_if( bullets.begin(), bullets.end(),
+            []( Bullets b )
+            {
+
+                return !b.IsAlive();
+            }
+        );
+        auto newendenemy = std::remove_if(enemy.begin(), enemy.end(),
+            [](Enemy e )
+            {
+
+                return !e.IsAlive();
+            }
+        );
+        auto newendwall = std::remove_if( walls.begin(), walls.end(),
+            []( Wall w )
+            {
+
+                return !w.IsAlive();
+            }
+        );
+        bullets.erase( newend, bullets.end() ); //제거
+        enemy.erase( newendenemy, enemy.end() );
+        walls.erase( newendwall, walls.end() );
     InvalidateRect( hWnd, NULL, TRUE ); 
     }
         break;
@@ -235,11 +301,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             {
                 e.draw( hdc );
             }
+            for (const auto& e : walls)
+            {
+                e.DrawRect( hdc );
+            }
             bar.Draw( hdc );
             
             player.Draw( hdc );
 
-            
+            for (const auto& e : enemy)
+            {
+                e.Draw( hdc );
+            }
             
             if (who != NULL )
             {

@@ -49,7 +49,7 @@ public:
 	{
 		Rectangle( hdc, left , top, right , bottom );
 	}
-	void Draw(HDC hdc, const int health)
+	void Draw(HDC hdc, const int health) 
 	{
 		DrawColorRect(hdc, health);
 	}
@@ -66,12 +66,12 @@ public:
 		points[3] = (center - Vec2<float>{left, bottom}) + center;
 
 	}
-	void Demaged(const int demage)
+	void Damaged(const int damage)
 	{
-		health -= demage;
+		health -= damage;
 		if (health == 0)
 		{
-			exist = false;
+			alive = false;
 		}
 	}
 	void DrawColorRect(HDC hdc, const int health)
@@ -103,17 +103,11 @@ public:
 			break;
 		}
 	}
-	bool CheckEnemy(const Enemy& en, const Wall& wa )
+	bool IsAlive() const
 	{
-		RECT enR = en.GetRect();
-		RECT waR = wa.GetRect();
-		if (enR.bottom >= waR.top)
-		{
-			Demaged(1);
-			
-			return TRUE;
-		}
+		return alive;
 	}
+	
 private:
 	Vec2<float> center;
 	std::vector<Vec2<float>> points;
@@ -126,6 +120,6 @@ private:
 	float top;
 	float bottom;
 	int health = 3;
-	bool exist = true;
+	bool alive = true;
 };
 
