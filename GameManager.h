@@ -56,44 +56,55 @@ public:
 
     void Draw(HDC hdc)
     {
-        HDC hMemDC;
-        HBITMAP hOldbitmap;
-        
-        hMemDC = CreateCompatibleDC( hdc );
-        if (hDoubleBufferImage == NULL)
+        switch (mode)
         {
-            hDoubleBufferImage = CreateCompatibleBitmap( hdc, clientRect.right, clientRect.bottom );
+        case GameManager::GameMode::GameStart:
+            break;
+        case GameManager::GameMode::MainGame:
+            {
+                HDC hMemDC;
+                HBITMAP hOldbitmap;
+
+                hMemDC = CreateCompatibleDC( hdc );
+                if (hDoubleBufferImage == NULL)
+                {
+                    hDoubleBufferImage = CreateCompatibleBitmap( hdc, clientRect.right, clientRect.bottom );
+                }
+                hOldbitmap = (HBITMAP)SelectObject( hMemDC, hDoubleBufferImage );
+
+                FillRect( hMemDC, &clientRect, (HBRUSH)GetStockObject( WHITE_BRUSH ) );
+
+                for (const auto& e : bullets)
+                {
+                    e.draw( hMemDC );
+                }
+                for (const auto& e : walls)
+                {
+                    e.DrawRect( hMemDC );
+                }
+                bar.Draw( hMemDC );
+
+                player.Draw( hMemDC );
+
+                for (const auto& e : enemy)
+                {
+                    e.Draw( hMemDC );
+                }
+
+                if (who != NULL)
+                {
+                    health -= 1;
+                    walls[who].Draw( hMemDC, health );
+                }
+
+                BitBlt( hdc, 0, 0, clientRect.right, clientRect.bottom, hMemDC, 0, 0, SRCCOPY );
+                SelectObject( hMemDC, hOldbitmap );
+                DeleteObject( hMemDC );
+            }
+            break;
+        case GameManager::GameMode::GameEnd:
+            break;
         }
-        hOldbitmap = (HBITMAP)SelectObject( hMemDC, hDoubleBufferImage );
-
-        FillRect( hMemDC, &clientRect, (HBRUSH)GetStockObject( WHITE_BRUSH ) );
-
-        for (const auto& e : bullets)
-        {
-            e.draw( hMemDC );
-        }
-        for (const auto& e : walls)
-        {
-            e.DrawRect( hMemDC );
-        }
-        bar.Draw( hMemDC );
-
-        player.Draw( hMemDC );
-
-        for (const auto& e : enemy)
-        {
-            e.Draw( hMemDC );
-        }
-
-        if (who != NULL)
-        {
-            health -= 1;
-            walls[who].Draw( hMemDC, health );
-        }
-
-        BitBlt( hdc, 0, 0, clientRect.right, clientRect.bottom, hMemDC, 0, 0, SRCCOPY );
-        SelectObject( hMemDC, hOldbitmap );
-        DeleteObject( hMemDC );
     }
 private:
     void KeyboardInput(float dt)
@@ -191,7 +202,7 @@ private:
     FrameTimer frametimer;
     std::vector<Wall> walls;
     HBITMAP hDoubleBufferImage;
-    GameMode mode = GameMode::MainGame;
+    GameMode mode = GameMode::GameStart;
 
     int health = 3;
     bool check = false;

@@ -47,7 +47,7 @@ public:
 	}
 	void DrawRect( HDC hdc) const
 	{
-		Rectangle( hdc, left , top, right , bottom );
+		Rectangle( hdc, (int)left , (int)top, (int)right , (int)bottom );
 	}
 	void Draw(HDC hdc, const int health) 
 	{

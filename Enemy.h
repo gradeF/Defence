@@ -18,7 +18,7 @@ public:
 	}
 	void Draw(HDC hdc) const
 	{
-		Rectangle(hdc, center.x - (width * 0.5f), center.y - (height * 0.5f), center.x + (width * 0.5f), center.y + (height * 0.5f));
+		Rectangle(hdc, int(center.x - (width * 0.5f)), int(center.y - (height * 0.5f)), int(center.x + (width * 0.5f)), int(center.y + (height * 0.5f)));
 	}
 
 	void Move( float dt )

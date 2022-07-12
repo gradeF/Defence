@@ -158,8 +158,6 @@ VOID CALLBACK TimmerProc( HWND hWnd, UINT, WPARAM, DWORD )
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    HDC hdc;
-    
     switch (message)
     {
     case WM_CREATE:

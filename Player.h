@@ -46,7 +46,7 @@ public:
 		Player(),
 		point( 0.0f, 0.0f ),
 		//temp(0.0f, 0.f),
-		angle( M_PI * 45.0f / 180.0f ),
+		angle( float(M_PI * 45.0f / 180.0f) ),
 		r( 1 )
 	{}
 	barrel( const Vec2<float>& center, Vec2<float> point, float r )
@@ -54,7 +54,7 @@ public:
 		Player( center ),
 		point( point ),
 		//temp(point),
-		angle( M_PI * 45.0f / 180.0f ),
+		angle( float( M_PI * 45.0f / 180.0f ) ),
 		r( r )
 	{}
 	barrel( float x, float y, float r )
@@ -62,13 +62,13 @@ public:
 		Player( x, y ),
 		point( x + r, y - r ),
 		//temp(x+r, y-r),
-		angle( M_PI * 45.0f / 180.0f ),
+		angle( float( M_PI * 45.0f / 180.0f ) ),
 		r( r )
 	{}
 	void Draw( HDC hdc ) const
 	{
-		MoveToEx( hdc, center.x, center.y, NULL );
-		LineTo( hdc, point.x, point.y );
+		MoveToEx( hdc, (int)center.x, (int)center.y, NULL );
+		LineTo( hdc, (int)point.x, (int)point.y );
 	}
 	void RotateRight(float dt)
 	{

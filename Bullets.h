@@ -24,7 +24,7 @@ public:
 	~Bullets() {}
 	void draw(HDC hdc) const
 	{
-		Ellipse(hdc, vec.x - r, vec.y - r, vec.x + r, vec.y + r);
+		Ellipse(hdc, (int)(vec.x - r), (int)(vec.y - r), (int)(vec.x + r), (int)(vec.y + r));
 	}
 	void Move( float dt ) //Here is for bullets to move
 	{
