@@ -25,23 +25,24 @@ public:
 	{
 		Rectangle(hdc, center.x - (width * 0.5f), center.y - (height * 0.5f), center.x + (width * 0.5f), center.y + (height * 0.5f));
 	}
-	void Move()
-	{
-		center.y += 3.0f;
-	}
-	void CheckBullets(const Bullets& bullets, const Enemy& en)
-	{
-		const RECT bullet = bullets.GetRect();
-		const RECT enemy = en.GetRect();
-		if (bullet.left< enemy.right &&
-			bullet.top < enemy.bottom &&
-			bullet.right > enemy.left &&
-			bullet.bottom > enemy.right)
-		{
 
-		}
+	void Move( float dt )
+	{
+		center.y += speed * dt;
 	}
-
+	bool CheckCollision(const RECT rect)
+	{	
+		const RECT thisR = GetRect();
+		return (rect.left<  thisR.right&&
+			rect.top < thisR.bottom&&
+			rect.right > thisR.left&&
+			rect.bottom > thisR.top);
+	}
+	bool CheckBottom(const RECT winR)
+	{
+		const RECT thisR = GetRect();
+		return (thisR.bottom > winR.bottom);
+	}
 private:
 	static constexpr float gen_x_min = 100.0f;
 	static constexpr float gen_x_max = 400.0f;

@@ -221,7 +221,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         for (auto& e : bullets)
         {
-            e.Move();
+            e.Move( dt );
         }
     InvalidateRect( hWnd, NULL, TRUE ); 
     }

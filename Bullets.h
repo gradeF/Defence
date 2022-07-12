@@ -26,10 +26,10 @@ public:
 	{
 		Ellipse(hdc, vec.x - r, vec.y - r, vec.x + r, vec.y + r);
 	}
-	void Move() //Here is for bullets to move
+	void Move( float dt ) //Here is for bullets to move
 	{
- 		vec.x = vec.x + dir.x * vel;
-		vec.y = vec.y + dir.y * vel;
+ 		vec.x = vec.x + dir.x * vel * dt;
+		vec.y = vec.y + dir.y * vel * dt;
 	}
 	RECT GetRect() const
 	{
