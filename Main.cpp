@@ -2,14 +2,11 @@
 //
 
 #include "framework.h"
-#include "Player.h"
 #include "Main.h"
-#include "Enemy.h"
-#include "Bullets.h"
-#include "Wall.h"
-#include "FrameTimer.h"
-#include <algorithm>
 
+#include "GameManager.h"
+
+GameManager game;
 #define MAX_LOADSTRING 100
 
 // 전역 변수:
@@ -23,7 +20,7 @@ BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK Dlg_Proc(HWND hWnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
-
+VOID CALLBACK TimmerProc(HWND, UINT, WPARAM, DWORD);
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -51,13 +48,18 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     MSG msg;
 
     // 기본 메시지 루프입니다:
-    while (GetMessage(&msg, nullptr, 0, 0))
+    while (true)
     {
-        if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+        if (PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ))
         {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
+            TranslateMessage( &msg );
+            DispatchMessage( &msg );
+            if (msg.message == WM_QUIT)
+            {
+                return false;
+            }
         }
+        game.Update();
     }
 
     return (int) msg.wParam;
@@ -149,39 +151,25 @@ INT_PTR CALLBACK Dlg_Proc(HWND hWnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
     return 0;
 }
 
+VOID CALLBACK TimmerProc( HWND hWnd, UINT, WPARAM, DWORD )
+{
+    InvalidateRect( hWnd, NULL, TRUE );
+}
+
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     HDC hdc;
-    Player player(510, 410);
-    static barrel bar( 510, 410, 80 );
-    static std::vector<Bullets> bullets;
-    static std::vector<Enemy> enemy;
-    static FrameTimer frametimer;
-    static std::vector<Wall> walls(8);
-    static RECT clientRect;
-
-    static int space;
-    static int health = 3;
-    static bool check = false;
-    static int count = 0;
-    static int who = 0;
-
-    static float gen_time = 0;
     
     switch (message)
     {
     case WM_CREATE:
-        SetTimer(hWnd, 1, 0, NULL);
-        GetClientRect( hWnd, &clientRect );
-        space = 0;
-        for (int i = 0; i < 8; i++)
-        {
-            float width = 140.0f;
-            walls[i] = { 70 + (width*i), 480, 140, 40 };
-        }     
+        SetTimer(hWnd, 1, 0, TimmerProc );
+        GetClientRect( hWnd, &game.clientRect);
+        //space = 0;
+           
         break;
     case WM_SIZE:
-        GetClientRect( hWnd, &clientRect );
+        GetClientRect( hWnd, &game.clientRect );
         break;
     case WM_COMMAND:
         {
@@ -200,128 +188,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             }
         }
         break;
-    case WM_KEYDOWN:
-        switch (wParam) {
-        case VK_LEFT:
-            bar.RotateLeft();
-            //InvalidateRect(hWnd, NULL, TRUE);
-            break;
-        case VK_RIGHT:
-            bar.RotateRight();
-            InvalidateRect(hWnd, NULL, TRUE);
-            break;
-        case VK_SPACE:
-            const Vec2<float> center = {player.Get_x(), player.Get_y()};
-            const Vec2<float> endpoint = { bar.Get_barrel_x(), bar.Get_barrel_y() };
-            const Vec2<float> direction = (endpoint - center).Normalize();
-            bullets.emplace_back( endpoint, direction ); 
-            space = 1;
-            InvalidateRect(hWnd, NULL, TRUE);
-            break;
-        }
-        break;
+   
     case WM_TIMER:
-    {
-        float dt = frametimer.Mark(); //초 간격(deltaTime)
-        gen_time += dt;
-
-        if (gen_time >= 2.0f)
         {
-            enemy.emplace_back((float)clientRect.right);
-            gen_time = 0.0f;
+                  
         }
-        for (auto& e : enemy)
-        {
-            e.Move( dt );
-            if (e.CheckBottom( clientRect ))
-            {
-                e.Kill();
-            }
-            for (auto& b : bullets)
-            {
-                if (e.CheckCollision( b.GetRect() ))
-                {
-                    e.Kill();
-                    b.Kill();
-                }
-            }
-            for (auto& w : walls)
-            {
-                if (e.CheckCollision( w.GetRect() ))
-                {
-                    e.Kill();
-                    
-                    w.Damaged(1);
-                    
-                }
-            }
-        }
-        for (auto& e : bullets)
-        {
-            e.Move( dt );
-            if (e.CheckBorder( clientRect )) //if(true)
-            {
-                e.Kill(); //alive comes false
-            }
-        }
-
-        auto newend = std::remove_if( bullets.begin(), bullets.end(),
-            []( Bullets b )
-            {
-
-                return !b.IsAlive();
-            }
-        );
-        auto newendenemy = std::remove_if(enemy.begin(), enemy.end(),
-            [](Enemy e )
-            {
-
-                return !e.IsAlive();
-            }
-        );
-        auto newendwall = std::remove_if( walls.begin(), walls.end(),
-            []( Wall w )
-            {
-
-                return !w.IsAlive();
-            }
-        );
-        bullets.erase( newend, bullets.end() ); //제거
-        enemy.erase( newendenemy, enemy.end() );
-        walls.erase( newendwall, walls.end() );
-    InvalidateRect( hWnd, NULL, TRUE ); 
-    }
         break;
     case WM_PAINT:
         {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
             // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다...
-            for ( const auto& e : bullets)
-            {
-                e.draw( hdc );
-            }
-            for (const auto& e : walls)
-            {
-                e.DrawRect( hdc );
-            }
-            bar.Draw( hdc );
-            
-            player.Draw( hdc );
-
-            for (const auto& e : enemy)
-            {
-                e.Draw( hdc );
-            }
-            
-            if (who != NULL )
-            {
-                health -= 1;
-                walls[who].Draw(hdc,health);
-            }
-                
-           
-            
+            game.Draw( hdc );
             EndPaint(hWnd, &ps);
         }
         break;
