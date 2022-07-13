@@ -1,60 +1,60 @@
 #pragma once
 #include "framework.h"
+#include "Bullets.h"
 #include <random>
 class Enemy
 {
 public:
-	Enemy()
-	{
-		width = 120.0f;
-		height = 120.0f;
-		std::random_device rd;
-		std::mt19937 rng(rd());
-		std::uniform_real_distribution<float> RotateGen(RotateMin, RotateMax);
-		x = RotateGen(rng);
-		y = 100.0f;
-	}
-	Enemy(float width, float height)
-		:
-		width(width),
-		height(height)
+	Enemy(float max)
 	{
 		std::random_device rd;
-		std::mt19937 rng(rd());
-		std::uniform_real_distribution<float> RotateGen(RotateMin, RotateMax);
-		x = RotateGen(rng);
-		y = 100.0f;
+		std::mt19937 rng( rd() );
+		std::uniform_real_distribution<float> gen_x(0.0f, max );
+		center = { gen_x( rng ), 0.0f };
 	}
-	float GetX() const
+	RECT GetRect() const
 	{
-		return x;
+		return { (long)(center.x - (width * 0.5f)), (long)(center.y - (height * 0.5f)), (long)(center.x + (width * 0.5f)), (long)(center.y + (height * 0.5f)) };
 	}
-	float GetY() const
+	void Draw(HDC hdc) const
 	{
-		return y;
+		Rectangle(hdc, int(center.x - (width * 0.5f)), int(center.y - (height * 0.5f)), int(center.x + (width * 0.5f)), int(center.y + (height * 0.5f)));
 	}
-	void SetX(float x)
+
+	void Move( float dt )
 	{
-		this->x = x;
+		center.y += speed * dt;
 	}
-	void SetY(float y)
-	{
-		this->y = y;
+	bool CheckCollision(const RECT rect)
+	{	
+		const RECT thisR = GetRect();
+		return (rect.left<  thisR.right&&
+			rect.top < thisR.bottom&&
+			rect.right > thisR.left&&
+			rect.bottom > thisR.top);
 	}
-	void Draw(HDC hdc)
+	bool CheckBottom(const RECT winR)
 	{
-		Rectangle(hdc, x - (width * 0.5f), y - (height * 0.5f), x + (width * 0.5f), y + (height * 0.5f));
+		const RECT thisR = GetRect();
+		return (thisR.bottom > winR.bottom);
 	}
-	void Move()
+	bool IsAlive() const
 	{
-		y += 3.0f;
+		return alive;
+	}
+	void Kill()
+	{
+		alive = false;
 	}
 private:
-	float width;
-	float height;
-	float x, y;
+	
+	static constexpr float speed = 100.0f;
+	static constexpr float width = 40.0f;
+	static constexpr float height = 40.0f;
 
-	float RotateMin = 100.0f;
-	float RotateMax = 1300.0f;
+private:
+	Vec2<float> center;
+	bool alive = true;
+
 };
 

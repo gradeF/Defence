@@ -4,6 +4,11 @@
 #include "framework.h"
 #include "Main.h"
 
+#include "GameManager.h"
+#include <string>
+
+GameManager game;
+bool isGameFinished = false;
 #define MAX_LOADSTRING 100
 
 // 전역 변수:
@@ -16,19 +21,9 @@ ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
-INT_PTR CALLBACK Dlg_Proc(HWND hWnd, UINT iMsg, WPARAM wParam, LPARAM lParam);
-
-
-void Draw_circle(HDC hdc, POINT center, int radius)
-{
-    //원의 중심과 반지름을 인자로 받아 원을 그리는 함수를 구현
-    int x1 = center.x - radius;
-    int y1 = center.y - radius;
-    int x2 = center.x + radius;
-    int y2 = center.y + radius;
-    Ellipse(hdc, x1, y1, x2, y2);
-    
-}
+VOID CALLBACK TimmerProc(HWND, UINT, WPARAM, DWORD);
+BOOL    CALLBACK    StartDialogProc( HWND, UINT, WPARAM, LPARAM );
+BOOL    CALLBACK    RankDialogProc( HWND, UINT, WPARAM, LPARAM );
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -56,13 +51,18 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     MSG msg;
 
     // 기본 메시지 루프입니다:
-    while (GetMessage(&msg, nullptr, 0, 0))
+    while (true)
     {
-        if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+        if (PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ))
         {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
+            TranslateMessage( &msg );
+            DispatchMessage( &msg );
+            if (msg.message == WM_QUIT)
+            {
+                return false;
+            }
         }
+        game.Update();
     }
 
     return (int) msg.wParam;
@@ -134,40 +134,136 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //  WM_DESTROY  - 종료 메시지를 게시하고 반환합니다.
 //
 //
-INT_PTR CALLBACK Dlg_Proc(HWND hWnd, UINT iMsg, WPARAM wParam, LPARAM lParam)
+
+VOID CALLBACK TimmerProc( HWND hWnd, UINT, WPARAM, DWORD )
 {
-    
+    InvalidateRect( hWnd, NULL,FALSE );
+}
+
+BOOL CALLBACK StartDialogProc( HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam )
+{
+    UNREFERENCED_PARAMETER( lParam );
     switch (iMsg)
     {
     case WM_INITDIALOG:
-        return 1;
+        {
+            HWND hBtn = GetDlgItem( hDlg, IDOK );
+            EnableWindow( hBtn, FALSE );
+        }
+        return TRUE;
+
     case WM_COMMAND:
         switch (LOWORD(wParam))
         {
+        case IDC_BUTTON_INPUT:
+            {
+                wchar_t  word[256];
+                GetDlgItemText( hDlg, IDC_IDBOX, word, 256 );
+                game.SetUserID( word );
+
+                if(game.GetUserID().size() != 0)
+                {
+                    HWND hBtn = GetDlgItem( hDlg, IDOK );
+                    EnableWindow( hBtn, TRUE );
+                }
+                else
+                {
+                    HWND hBtn = GetDlgItem( hDlg, IDOK );
+                    EnableWindow( hBtn, FALSE );
+                }
+            }
+            break;
+
         case IDOK:
-            GetDlgItemText(hWnd, IDC_IDBOX, ID, 100);
-            EndDialog(hWnd, 0);
+            {
+                EndDialog( hDlg, LOWORD( wParam ) );
+                game.SetGameModeMainGame();
+               
+                return TRUE;
+            }
+            break;
+
+        case IDCANCEL:
+            EndDialog( hDlg, LOWORD( wParam ) );
+            PostQuitMessage( 0 );
+            return FALSE;
+            break;
+        }
+
+        break;
+    }
+    return FALSE;
+}
+
+BOOL CALLBACK RankDialogProc( HWND hDlg, UINT iMsg, WPARAM wParam, LPARAM lParam )
+{
+    UNREFERENCED_PARAMETER( lParam );
+    switch (iMsg)
+    {
+    case WM_INITDIALOG:
+        {
+            auto rank = game.GetRank();
+
+            std::wstring topRankers[3];
+
+            int i = 0;
+            for (auto rIt = rank.rbegin(); i < 3 && rIt != rank.rend(); ++rIt)
+            {
+                for (const auto& str : rIt->second)
+                {
+                    if (i >= 3)
+                    {
+                        break;
+                    }
+                    topRankers[i] = str + L": " + std::to_wstring(rIt->first);
+                    ++i;
+                }
+            }
+
+            const std::wstring curPlayerStr = game.GetUserID() + L": " + std::to_wstring(game.GetScore());
+            SetDlgItemText( hDlg, IDC_RESULT, curPlayerStr.c_str() );
+            SetDlgItemText( hDlg, IDC_STATIC_RANK1, topRankers[0].c_str() );
+            SetDlgItemText( hDlg, IDC_STATIC_RANK2, topRankers[1].c_str() );
+            SetDlgItemText( hDlg, IDC_STATIC_RANK3, topRankers[2].c_str() );
+        }
+        break;
+
+    case WM_COMMAND:
+        switch (LOWORD( wParam ))
+        {
+
+        case IDOK:
+        case IDC_BUTTON_EXIT:
+        case IDCANCEL:
+            EndDialog( hDlg, LOWORD( wParam ) );
+            game.SaveDataFromRank();
+            PostQuitMessage( 0 );
+            return FALSE;
             break;
         }
         break;
     }
-    return 0;
+    return FALSE;
 }
 
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
 {
-    HDC hdc;
-    static POINT player;
-
-    static RECT rectView;
+    if (game.IsGameEnd() && !isGameFinished)
+    {
+        DialogBox( hInst, MAKEINTRESOURCE( IDD_DIALOG_END ), hWnd, RankDialogProc );
+        isGameFinished = true;
+    }
     switch (message)
     {
     case WM_CREATE:
-        GetClientRect(hWnd, &rectView);
-        player.x = (rectView.right - rectView.left) * 0.5f;
-        player.y = (rectView.bottom - rectView.top) * 0.5f;
+        SetTimer(hWnd, 1, 0, TimmerProc );
+        GetClientRect( hWnd, &game.clientRect);
+        DialogBox( hInst, MAKEINTRESOURCE( IDD_DIALOG_START ), hWnd, StartDialogProc );
+           
         break;
-    
+    case WM_SIZE:
+        GetClientRect( hWnd, &game.clientRect );
+        break;
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);
@@ -185,27 +281,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             }
         }
         break;
-    case WM_KEYDOWN:
-        switch (wParam) {
-        case VK_LEFT:
-            player.x -= 20.0f;
-            InvalidateRect(hWnd, NULL, TRUE);
-            break;
-        case VK_RIGHT:
-            player.x += 20.0f;
-            InvalidateRect(hWnd, NULL, TRUE);
-            break;
-        }
-        break;
+   
     case WM_TIMER:
-     
+        {
+                  
+        }
         break;
     case WM_PAINT:
         {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
             // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다...
-            Draw_circle(hdc, player, 20);
+            game.Draw( hdc );
             EndPaint(hWnd, &ps);
         }
         break;
